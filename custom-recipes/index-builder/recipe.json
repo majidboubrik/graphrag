@@ -5,7 +5,7 @@
         // label: name of the recipe as displayed, should be short
         "label": "Index builder",
         // description: longer string to help end users understand what this recipe does
-        "description": "",
+        "description": "Use this recipe to build the graphrag index from unstructured documents",
         // icon: must be one of the FontAwesome 5.15.4 icons, complete list here at https://fontawesome.com/v5/docs/
         "icon": "fas fa-puzzle-piece"
     },
