@@ -11,3 +11,4 @@ version-tags.json
 .htmlcov
 .DS_Store
 .idea
+.env
