@@ -1,0 +1,2309 @@
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/types/embeddings/io.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""OpenAI embeddings input/output types."""
+
+from typing import TypeAlias
+
+from fnllm.openai.types.aliases import OpenAIEmbeddingModel
+from fnllm.types.generalized import EmbeddingsLLMInput, EmbeddingsLLMOutput
+from fnllm.types.metrics import LLMUsageMetrics
+
+OpenAIEmbeddingsInput: TypeAlias = EmbeddingsLLMInput
+"""Main input type for OpenAI embeddings."""
+
+
+class OpenAIEmbeddingsOutput(EmbeddingsLLMOutput):
+    """OpenAI embeddings completion output."""
+
+    raw_input: OpenAIEmbeddingsInput | None
+    """Raw input that resulted in this output."""
+
+    raw_output: list[OpenAIEmbeddingModel]
+    """Raw embeddings output from OpenAI."""
+
+    usage: LLMUsageMetrics | None
+    """Usage statistics for the embeddings request."""
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/types/embeddings/__init__.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""OpenAI embeddings types."""
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/types/embeddings/parameters.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""OpenAI embeddings parameters types."""
+
+from typing import Literal
+
+from typing_extensions import NotRequired, TypedDict
+
+
+class OpenAIEmbeddingsParameters(TypedDict):
+    """OpenAI allowed embeddings parameters."""
+
+    model: NotRequired[str]
+
+    dimensions: NotRequired[int]
+
+    encoding_format: NotRequired[Literal["float", "base64"]]
+
+    user: NotRequired[str]
+
+    timeout: NotRequired[float]
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/types/chat/io.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""OpenAI input/output types."""
+
+from collections.abc import AsyncIterable, Awaitable, Callable
+from typing import ClassVar, TypeAlias
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from fnllm.openai.types.aliases import (
+    OpenAIChatCompletionMessageModel,
+    OpenAIChatCompletionMessageParam,
+)
+from fnllm.types.generalized import ChatLLMOutput
+from fnllm.types.metrics import LLMUsageMetrics
+
+OpenAIChatMessageInput: TypeAlias = OpenAIChatCompletionMessageParam
+"""OpenAI chat message input."""
+
+OpenAIChatHistoryEntry: TypeAlias = OpenAIChatCompletionMessageParam
+"""OpenAI chat history entry."""
+
+OpenAIChatCompletionInput: TypeAlias = str | OpenAIChatMessageInput | None
+"""Main input type for OpenAI completions."""
+
+
+class OpenAIChatOutput(ChatLLMOutput):
+    """OpenAI chat completion output."""
+
+    raw_input: OpenAIChatMessageInput | None
+    """Raw input that resulted in this output."""
+
+    raw_output: OpenAIChatCompletionMessageModel
+    """Raw output message from OpenAI."""
+
+    usage: LLMUsageMetrics | None
+    """Usage statistics for the completion request."""
+
+
+class OpenAIStreamingChatOutput(BaseModel, arbitrary_types_allowed=True):
+    """Async iterable chat content."""
+
+    model_config: ClassVar[ConfigDict] = ConfigDict(arbitrary_types_allowed=True)
+
+    raw_input: OpenAIChatMessageInput | None = Field(
+        default=None, description="Raw input that resulted in this output."
+    )
+
+    usage: LLMUsageMetrics | None = Field(
+        default=None,
+        description="Usage statistics for the completion request.\nThis will only be available after the stream is complete, if the LLM has been configured to emit usage.",
+    )
+
+    content: AsyncIterable[str | None] = Field(exclude=True)
+
+    close: Callable[[], Awaitable[None]] = Field(
+        description="Close the underlying iterator", exclude=True
+    )
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/types/chat/__init__.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""OpenAI chat types."""
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/types/chat/parameters.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""OpenAI chat parameters types."""
+
+from collections.abc import Iterable
+from typing import Literal
+
+from typing_extensions import NotRequired, TypedDict
+
+from fnllm.openai.types.aliases import (
+    OpenAIChatCompletionToolChoiceOptionParam,
+    OpenAIChatCompletionToolParam,
+    OpenAIChatModel,
+    OpenAIFunctionCallCreateParam,
+    OpenAIFunctionCreateParam,
+    OpenAIResponseFormatCreateParam,
+)
+
+
+#
+# Note: streaming options have been removed from this class to avoid downstream tying issues.
+# OpenAI streaming should be handled with a StreamingLLM, not additional client-side parameters.
+#
+class OpenAIChatParameters(TypedDict):
+    """OpenAI allowed chat parameters."""
+
+    model: NotRequired[str | OpenAIChatModel]
+
+    frequency_penalty: NotRequired[float | None]
+
+    function_call: NotRequired[OpenAIFunctionCallCreateParam]
+
+    functions: NotRequired[Iterable[OpenAIFunctionCreateParam]]
+
+    logit_bias: NotRequired[dict[str, int] | None]
+
+    logprobs: NotRequired[bool | None]
+
+    max_tokens: NotRequired[int | None]
+
+    n: NotRequired[int | None]
+
+    parallel_tool_calls: NotRequired[bool]
+
+    presence_penalty: NotRequired[float | None]
+
+    response_format: NotRequired[OpenAIResponseFormatCreateParam]
+
+    seed: NotRequired[int | None]
+
+    service_tier: NotRequired[Literal["auto", "default"] | None]
+
+    stop: NotRequired[str | None | list[str]]
+
+    temperature: NotRequired[float | None]
+
+    tool_choice: NotRequired[OpenAIChatCompletionToolChoiceOptionParam]
+
+    tools: NotRequired[Iterable[OpenAIChatCompletionToolParam]]
+
+    top_logprobs: NotRequired[int | None]
+
+    top_p: NotRequired[float | None]
+
+    user: NotRequired[str]
+
+    timeout: NotRequired[float | None]
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/types/client.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""OpenAI client types."""
+
+from typing import Literal, Protocol, TypeAlias, overload, runtime_checkable
+
+from openai import AsyncAzureOpenAI, AsyncOpenAI
+from typing_extensions import Unpack
+
+from fnllm.openai.types.chat.io import (
+    OpenAIChatCompletionInput,
+    OpenAIChatHistoryEntry,
+    OpenAIChatOutput,
+    OpenAIStreamingChatOutput,
+)
+from fnllm.openai.types.chat.parameters import OpenAIChatParameters
+from fnllm.openai.types.embeddings.io import (
+    OpenAIEmbeddingsInput,
+    OpenAIEmbeddingsOutput,
+)
+from fnllm.openai.types.embeddings.parameters import OpenAIEmbeddingsParameters
+from fnllm.types.generics import TJsonModel
+from fnllm.types.io import LLMInput, LLMOutput
+from fnllm.types.protocol import LLM
+
+OpenAIClient = AsyncOpenAI | AsyncAzureOpenAI
+"""Allowed OpenAI client types."""
+
+OpenAITextChatLLM: TypeAlias = LLM[
+    OpenAIChatCompletionInput,
+    OpenAIChatOutput,
+    OpenAIChatHistoryEntry,
+    OpenAIChatParameters,
+]
+"""Alias for the fully typed OpenAIChatLLM instance."""
+
+OpenAIStreamingChatLLM: TypeAlias = LLM[
+    OpenAIChatCompletionInput,
+    OpenAIStreamingChatOutput,
+    OpenAIChatHistoryEntry,
+    OpenAIChatParameters,
+]
+
+OpenAIEmbeddingsLLM: TypeAlias = LLM[
+    OpenAIEmbeddingsInput, OpenAIEmbeddingsOutput, None, OpenAIEmbeddingsParameters
+]
+"""Alias for the fully typed OpenAIEmbeddingsLLM instance."""
+
+
+@runtime_checkable
+class OpenAIChatLLM(Protocol):
+    """Protocol for the OpenAI chat LLM."""
+
+    @overload
+    async def __call__(
+        self,
+        prompt: OpenAIChatCompletionInput,
+        *,
+        stream: Literal[True],
+        **kwargs: Unpack[
+            LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters]
+        ],
+    ) -> LLMOutput[OpenAIStreamingChatOutput, TJsonModel, OpenAIChatHistoryEntry]: ...
+
+    @overload
+    async def __call__(
+        self,
+        prompt: OpenAIChatCompletionInput,
+        *,
+        stream: Literal[False] | None = None,
+        **kwargs: Unpack[
+            LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters]
+        ],
+    ) -> LLMOutput[OpenAIChatOutput, TJsonModel, OpenAIChatHistoryEntry]: ...
+
+    def child(self, name: str) -> "OpenAIChatLLM":
+        """Create a child LLM."""
+        ...
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/types/__init__.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""OpenAI specific types."""
+
+from .aliases import (
+    OpenAIChatCompletionAssistantMessageParam,
+    OpenAIChatCompletionFunctionMessageParam,
+    OpenAIChatCompletionMessageModel,
+    OpenAIChatCompletionMessageParam,
+    OpenAIChatCompletionMessageToolCallModel,
+    OpenAIChatCompletionMessageToolCallParam,
+    OpenAIChatCompletionModel,
+    OpenAIChatCompletionStreamOptionsParam,
+    OpenAIChatCompletionSystemMessageParam,
+    OpenAIChatCompletionToolChoiceOptionParam,
+    OpenAIChatCompletionToolMessageParam,
+    OpenAIChatCompletionToolParam,
+    OpenAIChatCompletionUserMessageParam,
+    OpenAIChatModel,
+    OpenAIChoiceModel,
+    OpenAICompletionUsageModel,
+    OpenAICreateEmbeddingResponseModel,
+    OpenAIEmbeddingModel,
+    OpenAIEmbeddingUsageModel,
+    OpenAIFunctionCallCreateParam,
+    OpenAIFunctionCallModel,
+    OpenAIFunctionCallParam,
+    OpenAIFunctionCreateParam,
+    OpenAIFunctionDefinitionParam,
+    OpenAIFunctionModel,
+    OpenAIFunctionParam,
+    OpenAIResponseFormatCreateParam,
+)
+from .chat.io import (
+    OpenAIChatCompletionInput,
+    OpenAIChatHistoryEntry,
+    OpenAIChatMessageInput,
+    OpenAIChatOutput,
+    OpenAIStreamingChatOutput,
+)
+from .chat.parameters import OpenAIChatParameters
+from .client import (
+    OpenAIChatLLM,
+    OpenAIClient,
+    OpenAIEmbeddingsLLM,
+    OpenAITextChatLLM,
+)
+from .embeddings.io import OpenAIEmbeddingsInput, OpenAIEmbeddingsOutput
+from .embeddings.parameters import OpenAIEmbeddingsParameters
+
+__all__ = [
+    "OpenAIChatCompletionAssistantMessageParam",
+    "OpenAIChatCompletionFunctionMessageParam",
+    "OpenAIChatCompletionInput",
+    "OpenAIChatCompletionMessageModel",
+    "OpenAIChatCompletionMessageParam",
+    "OpenAIChatCompletionMessageToolCallModel",
+    "OpenAIChatCompletionMessageToolCallParam",
+    "OpenAIChatCompletionModel",
+    "OpenAIChatCompletionStreamOptionsParam",
+    "OpenAIChatCompletionSystemMessageParam",
+    "OpenAIChatCompletionToolChoiceOptionParam",
+    "OpenAIChatCompletionToolMessageParam",
+    "OpenAIChatCompletionToolParam",
+    "OpenAIChatCompletionUserMessageParam",
+    "OpenAIChatHistoryEntry",
+    "OpenAIChatLLM",
+    "OpenAIChatMessageInput",
+    "OpenAIChatModel",
+    "OpenAIChatOutput",
+    "OpenAIChatParameters",
+    "OpenAIChoiceModel",
+    "OpenAIClient",
+    "OpenAICompletionUsageModel",
+    "OpenAICreateEmbeddingResponseModel",
+    "OpenAIEmbeddingModel",
+    "OpenAIEmbeddingUsageModel",
+    "OpenAIEmbeddingsInput",
+    "OpenAIEmbeddingsLLM",
+    "OpenAIEmbeddingsOutput",
+    "OpenAIEmbeddingsParameters",
+    "OpenAIFunctionCallCreateParam",
+    "OpenAIFunctionCallModel",
+    "OpenAIFunctionCallParam",
+    "OpenAIFunctionCreateParam",
+    "OpenAIFunctionDefinitionParam",
+    "OpenAIFunctionModel",
+    "OpenAIFunctionParam",
+    "OpenAIResponseFormatCreateParam",
+    "OpenAIStreamingChatOutput",
+    "OpenAITextChatLLM",
+]
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/types/aliases.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""OpenAI aliases types."""
+
+from collections.abc import Sequence
+from typing import Literal, TypeAlias
+
+from openai.types.chat import (
+    ChatCompletion as ChatCompletionModel,
+)
+from openai.types.chat import (
+    ChatCompletionMessage as ChatCompletionMessageModel,
+)
+from openai.types.chat.chat_completion import Choice as ChoiceModel
+from openai.types.chat.chat_completion_assistant_message_param import (
+    FunctionCall as FunctionCallParam,
+)
+from openai.types.chat.chat_completion_function_message_param import (
+    ChatCompletionFunctionMessageParam,
+)
+from openai.types.chat.chat_completion_message import FunctionCall as FunctionCallModel
+from openai.types.chat.chat_completion_message_tool_call import (
+    ChatCompletionMessageToolCall as ChatCompletionMessageToolCallModel,
+)
+from openai.types.chat.chat_completion_message_tool_call import (
+    Function as FunctionModel,
+)
+from openai.types.chat.chat_completion_message_tool_call_param import (
+    ChatCompletionMessageToolCallParam,
+)
+from openai.types.chat.chat_completion_message_tool_call_param import (
+    Function as FunctionParam,
+)
+from openai.types.chat.chat_completion_stream_options_param import (
+    ChatCompletionStreamOptionsParam,
+)
+from openai.types.chat.chat_completion_system_message_param import (
+    ChatCompletionSystemMessageParam,
+)
+from openai.types.chat.chat_completion_tool_choice_option_param import (
+    ChatCompletionToolChoiceOptionParam,
+)
+from openai.types.chat.chat_completion_tool_message_param import (
+    ChatCompletionToolMessageParam,
+)
+from openai.types.chat.chat_completion_tool_param import ChatCompletionToolParam
+from openai.types.chat.chat_completion_user_message_param import (
+    ChatCompletionUserMessageParam,
+)
+from openai.types.chat.completion_create_params import (
+    Function as FunctionCreateParam,
+)
+from openai.types.chat.completion_create_params import (
+    FunctionCall as FunctionCallCreateParam,
+)
+from openai.types.chat.completion_create_params import (
+    ResponseFormat as ResponseFormatCreateParam,
+)
+from openai.types.chat_model import ChatModel
+from openai.types.completion_usage import CompletionUsage as CompletionUsageModel
+from openai.types.create_embedding_response import (
+    CreateEmbeddingResponse as CreateEmbeddingResponseModel,
+)
+from openai.types.create_embedding_response import Usage as EmbeddingUsageModel
+from openai.types.embedding import Embedding as EmbeddingModel
+from openai.types.shared_params.function_definition import (
+    FunctionDefinition as FunctionDefinitionParam,
+)
+from typing_extensions import Required, TypedDict
+
+OpenAIChatModel: TypeAlias = ChatModel
+"""Alias for the ChatModel (available model types)."""
+
+OpenAICompletionUsageModel: TypeAlias = CompletionUsageModel
+"""Alias for the CompletionUsage (base model)."""
+
+OpenAIChatCompletionStreamOptionsParam: TypeAlias = ChatCompletionStreamOptionsParam
+"""Alias for the ChatCompletionStreamOptionsParam (param)."""
+
+OpenAIChatCompletionModel: TypeAlias = ChatCompletionModel
+"""Alias for the ChatCompletion (base model)."""
+
+OpenAIChatCompletionMessageModel: TypeAlias = ChatCompletionMessageModel
+"""Alias for the ChatCompletionMessage (base model)."""
+
+OpenAIChoiceModel: TypeAlias = ChoiceModel
+"""Alias for the Choice (base model)."""
+
+OpenAIFunctionModel: TypeAlias = FunctionModel
+"""Alias for the Function (base model)."""
+
+OpenAIFunctionParam: TypeAlias = FunctionParam
+"""Alias for the Function (param)."""
+
+OpenAIFunctionCreateParam: TypeAlias = FunctionCreateParam
+"""Alias for the Function (create param)."""
+
+OpenAIFunctionCallModel: TypeAlias = FunctionCallModel
+"""Alias for the FunctionCall (base model)."""
+
+OpenAIFunctionCallParam: TypeAlias = FunctionCallParam
+"""Alias for the FunctionCall (param)."""
+
+OpenAIFunctionCallCreateParam: TypeAlias = FunctionCallCreateParam
+"""Alias for the FunctionCall (create param)."""
+
+OpenAIFunctionDefinitionParam: TypeAlias = FunctionDefinitionParam
+"""Alias for the FunctionDefinition (param)."""
+
+OpenAIResponseFormatCreateParam: TypeAlias = ResponseFormatCreateParam
+"""Alias for the ResponseFormatCreateParam (create param)."""
+
+OpenAIChatCompletionMessageToolCallModel: TypeAlias = ChatCompletionMessageToolCallModel
+"""Alias for the ChatCompletionMessageToolCall (base model)."""
+
+OpenAIChatCompletionToolParam: TypeAlias = ChatCompletionToolParam
+"""Alias for the ChatCompletionToolParam (param)."""
+
+OpenAIChatCompletionMessageToolCallParam: TypeAlias = ChatCompletionMessageToolCallParam
+"""Alias for the ChatCompletionMessageToolCallParam (param)."""
+
+OpenAIChatCompletionToolChoiceOptionParam: TypeAlias = (
+    ChatCompletionToolChoiceOptionParam
+)
+"""Alias for the ChatCompletionToolChoiceOptionParam (param)."""
+
+
+# NOTE:
+# This is done to avoid using an Iterator for the `tool_calls`,
+# which when combined with pydantic will result in a generator that
+# can only be iterated once
+class _ChatCompletionAssistantMessageParam(TypedDict, total=False):
+    """Shadow ChatCompletionAssistantMessageParam from OpenAI."""
+
+    role: Required[Literal["assistant"]]
+    """The role of the messages author, in this case `assistant`."""
+
+    content: str | None
+    """The contents of the assistant message.
+
+    Required unless `tool_calls` or `function_call` is specified.
+    """
+
+    function_call: OpenAIFunctionCallParam | None
+    """Deprecated and replaced by `tool_calls`.
+
+    The name and arguments of a function that should be called, as generated by the
+    model.
+    """
+
+    name: str
+    """An optional name for the participant.
+
+    Provides the model information to differentiate between participants of the same
+    role.
+    """
+
+    tool_calls: Sequence[OpenAIChatCompletionMessageToolCallParam]
+    """The tool calls generated by the model, such as function calls."""
+
+
+OpenAIChatCompletionSystemMessageParam: TypeAlias = ChatCompletionSystemMessageParam
+"""Alias for the ChatCompletionSystemMessageParam (param)."""
+
+OpenAIChatCompletionUserMessageParam: TypeAlias = ChatCompletionUserMessageParam
+"""Alias for the ChatCompletionUserMessageParam (param)."""
+
+OpenAIChatCompletionAssistantMessageParam: TypeAlias = (
+    _ChatCompletionAssistantMessageParam
+)
+"""Alias for the ChatCompletionAssistantMessageParam (param)."""
+
+OpenAIChatCompletionToolMessageParam: TypeAlias = ChatCompletionToolMessageParam
+"""Alias for the ChatCompletionToolMessageParam (param)."""
+
+OpenAIChatCompletionFunctionMessageParam: TypeAlias = ChatCompletionFunctionMessageParam
+"""Alias for the ChatCompletionFunctionMessageParam (param)."""
+
+OpenAIChatCompletionMessageParam: TypeAlias = (
+    OpenAIChatCompletionSystemMessageParam
+    | OpenAIChatCompletionUserMessageParam
+    | OpenAIChatCompletionAssistantMessageParam
+    | OpenAIChatCompletionToolMessageParam
+    | OpenAIChatCompletionFunctionMessageParam
+)
+"""OpenAI possible chat completion message types (param)."""
+
+OpenAICreateEmbeddingResponseModel: TypeAlias = CreateEmbeddingResponseModel
+"""Alias for the CreateEmbeddingResponse (base model)."""
+
+OpenAIEmbeddingModel: TypeAlias = EmbeddingModel
+"""Alias for the Embedding (base model)."""
+
+OpenAIEmbeddingUsageModel: TypeAlias = EmbeddingUsageModel
+"""Alias for the EmbeddingUsage (base model)."""
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/chat_text.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""The chat-based LLM implementation."""
+
+from collections.abc import Iterator
+from typing import Any, cast
+
+from openai.types.chat.chat_completion_message_param import ChatCompletionMessageParam
+from typing_extensions import Unpack
+
+from fnllm.base.base import BaseLLM
+from fnllm.events.base import LLMEvents
+from fnllm.openai.types.aliases import OpenAIChatCompletionModel, OpenAIChatModel
+from fnllm.openai.types.chat.io import (
+    OpenAIChatCompletionInput,
+    OpenAIChatHistoryEntry,
+    OpenAIChatOutput,
+)
+from fnllm.openai.types.chat.parameters import OpenAIChatParameters
+from fnllm.openai.types.client import OpenAIClient
+from fnllm.services.cache_interactor import CacheInteractor
+from fnllm.services.json import JsonHandler
+from fnllm.services.rate_limiter import RateLimiter
+from fnllm.services.retryer import Retryer
+from fnllm.services.variable_injector import VariableInjector
+from fnllm.types.generics import TJsonModel
+from fnllm.types.io import LLMInput
+from fnllm.types.metrics import LLMUsageMetrics
+
+from .services.history_extractor import OpenAIHistoryExtractor
+from .services.usage_extractor import OpenAIUsageExtractor
+from .utils import build_chat_messages
+
+
+class OpenAITextChatLLMImpl(
+    BaseLLM[
+        OpenAIChatCompletionInput,
+        OpenAIChatOutput,
+        OpenAIChatHistoryEntry,
+        OpenAIChatParameters,
+    ]
+):
+    """A chat-based LLM."""
+
+    def __init__(
+        self,
+        client: OpenAIClient,
+        model: str | OpenAIChatModel,
+        cache: CacheInteractor,
+        *,
+        usage_extractor: OpenAIUsageExtractor[OpenAIChatOutput] | None = None,
+        history_extractor: OpenAIHistoryExtractor | None = None,
+        variable_injector: VariableInjector | None = None,
+        rate_limiter: RateLimiter[
+            OpenAIChatCompletionInput,
+            OpenAIChatOutput,
+            OpenAIChatHistoryEntry,
+            OpenAIChatParameters,
+        ]
+        | None = None,
+        retryer: Retryer[
+            OpenAIChatCompletionInput,
+            OpenAIChatOutput,
+            OpenAIChatHistoryEntry,
+            OpenAIChatParameters,
+        ]
+        | None = None,
+        model_parameters: OpenAIChatParameters | None = None,
+        events: LLMEvents | None = None,
+        json_handler: JsonHandler[OpenAIChatOutput, OpenAIChatHistoryEntry]
+        | None = None,
+    ):
+        """Create a new OpenAIChatLLM."""
+        super().__init__(
+            events=events,
+            usage_extractor=usage_extractor,
+            history_extractor=history_extractor,
+            variable_injector=variable_injector,
+            retryer=retryer,
+            rate_limiter=rate_limiter,
+            json_handler=json_handler,
+        )
+
+        self._client = client
+        self._model = model
+        self._global_model_parameters = model_parameters or {}
+        self._cache = cache
+
+    def child(self, name: str) -> Any:
+        """Create a child LLM."""
+        return OpenAITextChatLLMImpl(
+            self._client,
+            self._model,
+            self._cache.child(name),
+            events=self.events,
+            usage_extractor=cast(
+                OpenAIUsageExtractor[OpenAIChatOutput], self._usage_extractor
+            ),
+            history_extractor=cast(OpenAIHistoryExtractor, self._history_extractor),
+            variable_injector=self._variable_injector,
+            rate_limiter=self._rate_limiter,
+            retryer=self._retryer,
+            model_parameters=self._global_model_parameters,
+            json_handler=self._json_handler,
+        )
+
+    def _build_completion_parameters(
+        self, local_parameters: OpenAIChatParameters | None
+    ) -> OpenAIChatParameters:
+        params: OpenAIChatParameters = {
+            "model": self._model,
+            **self._global_model_parameters,
+            **(local_parameters or {}),
+        }
+
+        return params
+
+    async def _call_completion_or_cache(
+        self,
+        name: str | None,
+        *,
+        messages: list[OpenAIChatHistoryEntry],
+        parameters: OpenAIChatParameters,
+        bypass_cache: bool,
+    ) -> OpenAIChatCompletionModel:
+        # TODO: check if we need to remove max_tokens and n from the keys
+        return await self._cache.get_or_insert(
+            lambda: self._client.chat.completions.create(
+                messages=cast(Iterator[ChatCompletionMessageParam], messages),
+                **parameters,
+            ),
+            prefix=f"chat_{name}" if name else "chat",
+            key_data={"messages": messages, "parameters": parameters},
+            name=name,
+            json_model=OpenAIChatCompletionModel,
+            bypass_cache=bypass_cache,
+        )
+
+    async def _execute_llm(
+        self,
+        prompt: OpenAIChatCompletionInput,
+        **kwargs: Unpack[
+            LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters]
+        ],
+    ) -> OpenAIChatOutput:
+        name = kwargs.get("name")
+        history = kwargs.get("history", [])
+        bypass_cache = kwargs.get("bypass_cache", False)
+        local_model_parameters = kwargs.get("model_parameters")
+        messages, prompt_message = build_chat_messages(prompt, history)
+        completion_parameters = self._build_completion_parameters(
+            local_model_parameters
+        )
+
+        completion = await self._call_completion_or_cache(
+            name,
+            messages=messages,
+            parameters=completion_parameters,
+            bypass_cache=bypass_cache,
+        )
+
+        response = completion.choices[0].message
+
+        return OpenAIChatOutput(
+            raw_input=prompt_message,
+            raw_output=response,
+            content=response.content,
+            usage=LLMUsageMetrics(
+                input_tokens=completion.usage.prompt_tokens,
+                output_tokens=completion.usage.completion_tokens,
+            )
+            if completion.usage
+            else None,
+        )
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/features/__init__.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""Package with OpenAI specific features to be used to wrap base LLM protocol interfaces."""
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/features/tools_parsing.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""LLM tools parsing module for OpenAI."""
+
+from collections.abc import Sequence
+
+import pydantic
+from typing_extensions import Unpack
+
+from fnllm.openai.llm.utils import llm_tools_to_param
+from fnllm.openai.types.aliases import (
+    OpenAIChatCompletionMessageModel,
+    OpenAIChatCompletionMessageToolCallModel,
+)
+from fnllm.openai.types.chat.io import (
+    OpenAIChatCompletionInput,
+    OpenAIChatHistoryEntry,
+    OpenAIChatOutput,
+)
+from fnllm.openai.types.chat.parameters import OpenAIChatParameters
+from fnllm.tools import LLMTool
+from fnllm.tools.errors import ToolInvalidArgumentsError, ToolNotFoundError
+from fnllm.types.generics import TJsonModel
+from fnllm.types.io import LLMInput, LLMOutput
+from fnllm.types.protocol import LLM
+
+
+class OpenAIParseToolsLLM(
+    LLM[
+        OpenAIChatCompletionInput,
+        OpenAIChatOutput,
+        OpenAIChatHistoryEntry,
+        OpenAIChatParameters,
+    ],
+):
+    """An OpenAI tools parsing LLM."""
+
+    def __init__(
+        self,
+        delegate: LLM[
+            OpenAIChatCompletionInput,
+            OpenAIChatOutput,
+            OpenAIChatHistoryEntry,
+            OpenAIChatParameters,
+        ],
+    ):
+        """Create a new OpenAIParseToolsLLM."""
+        self._delegate = delegate
+
+    def child(self, name: str) -> "OpenAIParseToolsLLM":
+        """Create a child LLM (with child cache)."""
+        return OpenAIParseToolsLLM(self._delegate.child(name))
+
+    def _add_tools_to_parameters(
+        self,
+        parameters: LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters],
+        tools: Sequence[type[LLMTool]],
+    ) -> LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters]:
+        new_parameters = parameters.copy()
+
+        new_parameters["model_parameters"] = new_parameters.get("model_parameters", {})
+        new_parameters["model_parameters"]["tools"] = llm_tools_to_param(tools)
+
+        return new_parameters
+
+    def _parse_arguments(
+        self,
+        tool_call: OpenAIChatCompletionMessageToolCallModel,
+        *,
+        json_model: type[LLMTool],
+        raw_output: OpenAIChatCompletionMessageModel,
+    ) -> LLMTool:
+        try:
+            return json_model.model_validate_json(tool_call.function.arguments)
+        except pydantic.ValidationError as err:
+            raise ToolInvalidArgumentsError(
+                raw_output,
+                tool_call=tool_call,
+                expected_tool=json_model,
+                validation_error=err,
+            ) from err
+
+    def _parse_tool_calls(
+        self,
+        raw_output: OpenAIChatCompletionMessageModel,
+        *,
+        tools: Sequence[type[LLMTool]],
+    ) -> list[LLMTool]:
+        result = []
+        tool_calls = raw_output.tool_calls or []
+
+        for call in tool_calls:
+            tool = LLMTool.find_tool(tools, call.function.name)
+
+            if not tool:
+                raise ToolNotFoundError(raw_output, tool_call=call)
+
+            parsed_json = self._parse_arguments(
+                call, json_model=tool, raw_output=raw_output
+            )
+
+            parsed_json.__raw_arguments_json__ = call.function.arguments
+            parsed_json.call_id = call.id
+
+            result.append(parsed_json)
+
+        return result
+
+    async def __call__(
+        self,
+        prompt: OpenAIChatCompletionInput,
+        **kwargs: Unpack[
+            LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters]
+        ],
+    ) -> LLMOutput[OpenAIChatOutput, TJsonModel, OpenAIChatHistoryEntry]:
+        """Call the LLM."""
+        tools = kwargs.get("tools", [])
+
+        if not tools:
+            return await self._delegate(prompt, **kwargs)
+
+        completion_parameters = self._add_tools_to_parameters(kwargs, tools)
+
+        result = await self._delegate(prompt, **completion_parameters)
+
+        result.tool_calls = self._parse_tool_calls(
+            result.output.raw_output,
+            tools=tools,
+        )
+
+        return result
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/__init__.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+
+"""OpenAI LLM implementations."""
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/chat.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+"""OpenAI Chat LLM."""
+
+from typing import Any, Literal, overload
+
+from typing_extensions import Unpack
+
+from fnllm.openai.types.chat.io import (
+    OpenAIChatCompletionInput,
+    OpenAIChatHistoryEntry,
+    OpenAIChatOutput,
+    OpenAIStreamingChatOutput,
+)
+from fnllm.openai.types.chat.parameters import OpenAIChatParameters
+from fnllm.openai.types.client import (
+    OpenAIChatLLM,
+    OpenAIStreamingChatLLM,
+    OpenAITextChatLLM,
+)
+from fnllm.types.generics import TJsonModel
+from fnllm.types.io import LLMInput, LLMOutput
+
+
+class OpenAIChatLLMImpl(OpenAIChatLLM):
+    """The OpenAIChatLLM Facade."""
+
+    def __init__(
+        self,
+        *,
+        text_chat_llm: OpenAITextChatLLM,
+        streaming_chat_llm: OpenAIStreamingChatLLM,
+    ):
+        """Create a new OpenAI Chat Facade."""
+        self._text_chat_llm = text_chat_llm
+        self._streaming_chat_llm = streaming_chat_llm
+
+    def child(self, name: str) -> "OpenAIChatLLMImpl":
+        """Create a child LLM (with child cache)."""
+        return OpenAIChatLLMImpl(
+            text_chat_llm=self._text_chat_llm.child(name),
+            streaming_chat_llm=self._streaming_chat_llm.child(name),
+        )
+
+    @overload
+    async def __call__(
+        self,
+        prompt: OpenAIChatCompletionInput,
+        *,
+        stream: Literal[True],
+        **kwargs: Unpack[
+            LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters]
+        ],
+    ) -> LLMOutput[OpenAIStreamingChatOutput, TJsonModel, OpenAIChatHistoryEntry]: ...
+
+    @overload
+    async def __call__(
+        self,
+        prompt: OpenAIChatCompletionInput,
+        *,
+        stream: Literal[False] | None = None,
+        **kwargs: Unpack[
+            LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters]
+        ],
+    ) -> LLMOutput[OpenAIChatOutput, TJsonModel, OpenAIChatHistoryEntry]: ...
+
+    async def __call__(
+        self,
+        prompt: OpenAIChatCompletionInput,
+        *,
+        stream: bool | None = None,
+        **kwargs: Unpack[
+            LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters]
+        ],
+    ) -> LLMOutput[
+        Any | OpenAIStreamingChatOutput | OpenAIChatOutput,
+        TJsonModel,
+        OpenAIChatHistoryEntry,
+    ]:
+        """Invoke the streaming chat output."""
+        if stream:
+            return await self._streaming_chat_llm(prompt, **kwargs)
+
+        return await self._text_chat_llm(prompt, **kwargs)
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/embeddings.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""The EmbeddingsLLM class."""
+
+from typing import cast
+
+from typing_extensions import Unpack
+
+from fnllm.base.base import BaseLLM
+from fnllm.events.base import LLMEvents
+from fnllm.openai.types.aliases import OpenAICreateEmbeddingResponseModel
+from fnllm.openai.types.client import OpenAIClient
+from fnllm.openai.types.embeddings.io import (
+    OpenAIEmbeddingsInput,
+    OpenAIEmbeddingsOutput,
+)
+from fnllm.openai.types.embeddings.parameters import OpenAIEmbeddingsParameters
+from fnllm.services.cache_interactor import CacheInteractor
+from fnllm.services.rate_limiter import RateLimiter
+from fnllm.services.retryer import Retryer
+from fnllm.services.variable_injector import VariableInjector
+from fnllm.types.io import LLMInput
+from fnllm.types.metrics import LLMUsageMetrics
+
+from .services.usage_extractor import OpenAIUsageExtractor
+
+
+class OpenAIEmbeddingsLLMImpl(
+    BaseLLM[
+        OpenAIEmbeddingsInput, OpenAIEmbeddingsOutput, None, OpenAIEmbeddingsParameters
+    ],
+):
+    """A text-embedding generator LLM."""
+
+    def __init__(
+        self,
+        client: OpenAIClient,
+        model: str,
+        cache: CacheInteractor,
+        *,
+        usage_extractor: OpenAIUsageExtractor[OpenAIEmbeddingsOutput] | None = None,
+        variable_injector: VariableInjector | None = None,
+        rate_limiter: RateLimiter[
+            OpenAIEmbeddingsInput,
+            OpenAIEmbeddingsOutput,
+            None,
+            OpenAIEmbeddingsParameters,
+        ]
+        | None = None,
+        retryer: Retryer[
+            OpenAIEmbeddingsInput,
+            OpenAIEmbeddingsOutput,
+            None,
+            OpenAIEmbeddingsParameters,
+        ]
+        | None = None,
+        model_parameters: OpenAIEmbeddingsParameters | None = None,
+        events: LLMEvents | None = None,
+    ):
+        """Create a new OpenAIEmbeddingsLLM."""
+        super().__init__(
+            events=events,
+            usage_extractor=usage_extractor,
+            variable_injector=variable_injector,
+            rate_limiter=rate_limiter,
+            retryer=retryer,
+        )
+
+        self._client = client
+        self._model = model
+        self._cache = cache
+        self._global_model_parameters = model_parameters or {}
+
+    def child(self, name: str) -> "OpenAIEmbeddingsLLMImpl":
+        """Create a child LLM."""
+        return OpenAIEmbeddingsLLMImpl(
+            self._client,
+            self._model,
+            self._cache.child(name),
+            usage_extractor=cast(
+                OpenAIUsageExtractor[OpenAIEmbeddingsOutput], self._usage_extractor
+            ),
+            variable_injector=self._variable_injector,
+            rate_limiter=self._rate_limiter,
+            retryer=self._retryer,
+            model_parameters=self._global_model_parameters,
+            events=self._events,
+        )
+
+    def _build_embeddings_parameters(
+        self, local_parameters: OpenAIEmbeddingsParameters | None
+    ) -> OpenAIEmbeddingsParameters:
+        params: OpenAIEmbeddingsParameters = {
+            "model": self._model,
+            **self._global_model_parameters,
+            **(local_parameters or {}),
+        }
+
+        return params
+
+    async def _call_embeddings_or_cache(
+        self,
+        name: str | None,
+        *,
+        prompt: OpenAIEmbeddingsInput,
+        parameters: OpenAIEmbeddingsParameters,
+        bypass_cache: bool,
+    ) -> OpenAICreateEmbeddingResponseModel:
+        # TODO: check if we need to remove max_tokens and n from the keys
+        return await self._cache.get_or_insert(
+            lambda: self._client.embeddings.create(
+                input=prompt,
+                **parameters,
+            ),
+            prefix=f"embeddings_{name}" if name else "embeddings",
+            key_data={"input": prompt, "parameters": parameters},
+            name=name,
+            bypass_cache=bypass_cache,
+            json_model=OpenAICreateEmbeddingResponseModel,
+        )
+
+    async def _execute_llm(
+        self, prompt: OpenAIEmbeddingsInput, **kwargs: Unpack[LLMInput]
+    ) -> OpenAIEmbeddingsOutput:
+        name = kwargs.get("name")
+        local_model_parameters = kwargs.get("model_parameters")
+        bypass_cache = kwargs.get("bypass_cache", False)
+
+        embeddings_parameters = self._build_embeddings_parameters(
+            local_model_parameters
+        )
+
+        response = await self._call_embeddings_or_cache(
+            name,
+            prompt=prompt,
+            parameters=embeddings_parameters,
+            bypass_cache=bypass_cache,
+        )
+
+        return OpenAIEmbeddingsOutput(
+            raw_input=prompt,
+            raw_output=response.data,
+            embeddings=[d.embedding for d in response.data],
+            usage=LLMUsageMetrics(
+                input_tokens=response.usage.prompt_tokens,
+            )
+            if response.usage
+            else None,
+        )
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/utils.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""OpenAI parsing utilities."""
+
+from collections.abc import Iterable, Sequence
+from typing import cast
+
+from fnllm.openai.types.aliases import (
+    OpenAIChatCompletionAssistantMessageParam,
+    OpenAIChatCompletionMessageModel,
+    OpenAIChatCompletionMessageToolCallModel,
+    OpenAIChatCompletionMessageToolCallParam,
+    OpenAIChatCompletionToolParam,
+    OpenAIChatCompletionUserMessageParam,
+    OpenAIFunctionCallModel,
+    OpenAIFunctionCallParam,
+    OpenAIFunctionDefinitionParam,
+    OpenAIFunctionModel,
+    OpenAIFunctionParam,
+)
+from fnllm.openai.types.chat.io import OpenAIChatCompletionInput, OpenAIChatHistoryEntry
+from fnllm.tools.base import LLMTool
+
+
+def function_call_to_param(
+    func: OpenAIFunctionCallModel | None,
+) -> OpenAIFunctionCallParam | None:
+    """Parses FunctionCall base model to the equivalent typed dict."""
+    if not func:
+        return None
+
+    return OpenAIFunctionCallParam(
+        arguments=func.arguments,
+        name=func.name,
+    )
+
+
+def function_to_param(func: OpenAIFunctionModel) -> OpenAIFunctionParam:
+    """Parses Function base model to the equivalent typed dict."""
+    return OpenAIFunctionParam(arguments=func.arguments, name=func.name)
+
+
+def tool_calls_to_params(
+    tools: list[OpenAIChatCompletionMessageToolCallModel] | None,
+) -> Sequence[OpenAIChatCompletionMessageToolCallParam] | None:
+    """Parses a list of ChatCompletionMessageToolCall base model to the equivalent typed dict."""
+    if not tools:
+        return None
+
+    return [
+        OpenAIChatCompletionMessageToolCallParam(
+            id=tool.id, function=function_to_param(tool.function), type=tool.type
+        )
+        for tool in tools
+    ]
+
+
+def llm_tool_to_param(tool: type[LLMTool]) -> OpenAIFunctionDefinitionParam:
+    """Parses a class that implements LLMTool to the equivalent typed dict."""
+    return OpenAIFunctionDefinitionParam(
+        name=tool.get_name(),
+        description=tool.get_description(),
+        parameters=tool.get_parameters_schema(),
+    )
+
+
+def llm_tools_to_param(
+    tools: Sequence[type[LLMTool]],
+) -> Iterable[OpenAIChatCompletionToolParam]:
+    """Parses a list of classes that implements LLMTool to the equivalent typed dicts."""
+    return [
+        OpenAIChatCompletionToolParam(
+            function=llm_tool_to_param(tool),
+            type="function",
+        )
+        for tool in tools
+    ]
+
+
+def chat_completion_message_to_param(
+    message: OpenAIChatCompletionMessageModel,
+) -> OpenAIChatCompletionAssistantMessageParam:
+    """Parses ChatCompletionMessage base model to the equivalent typed dict."""
+    param = OpenAIChatCompletionAssistantMessageParam(
+        role=message.role, content=message.content
+    )
+
+    function_call = function_call_to_param(message.function_call)
+
+    if function_call:
+        param["function_call"] = function_call
+
+    tool_calls = tool_calls_to_params(message.tool_calls)
+
+    if tool_calls:
+        param["tool_calls"] = tool_calls
+
+    return param
+
+
+def build_chat_messages(
+    prompt: OpenAIChatCompletionInput,
+    history: Sequence[OpenAIChatHistoryEntry],
+) -> tuple[list[OpenAIChatHistoryEntry], OpenAIChatHistoryEntry]:
+    """Builds a chat history list from the prompt and existing history, along with the prompt message."""
+    if isinstance(prompt, str):
+        prompt = OpenAIChatCompletionUserMessageParam(
+            content=prompt,
+            role="user",
+        )
+    messages = [*history]
+    if prompt is not None:
+        messages.append(prompt)
+    return messages, cast(OpenAIChatHistoryEntry, prompt)
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/chat_streaming.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""The chat-based LLM implementation."""
+
+import traceback
+from collections.abc import AsyncIterator, Callable, Iterator
+from typing import TypeAlias, cast
+
+from openai import AsyncStream
+from openai.types.chat import ChatCompletionChunk
+from openai.types.chat.chat_completion_message_param import ChatCompletionMessageParam
+from typing_extensions import Unpack
+
+from fnllm.base.base import BaseLLM
+from fnllm.events.base import LLMEvents
+from fnllm.openai.types.aliases import OpenAIChatModel
+from fnllm.openai.types.chat.io import (
+    OpenAIChatCompletionInput,
+    OpenAIChatHistoryEntry,
+    OpenAIStreamingChatOutput,
+)
+from fnllm.openai.types.chat.parameters import OpenAIChatParameters
+from fnllm.openai.types.client import OpenAIClient
+from fnllm.services.rate_limiter import RateLimiter
+from fnllm.services.retryer import Retryer
+from fnllm.services.variable_injector import VariableInjector
+from fnllm.types import LLMMetrics, LLMUsageMetrics
+from fnllm.types.generics import TJsonModel
+from fnllm.types.io import LLMInput
+
+from .utils import build_chat_messages
+
+ChunkStream: TypeAlias = AsyncStream[ChatCompletionChunk]
+
+
+class OpenAIStreamingChatLLMImpl(
+    BaseLLM[
+        OpenAIChatCompletionInput,
+        OpenAIStreamingChatOutput,
+        OpenAIChatHistoryEntry,
+        OpenAIChatParameters,
+    ]
+):
+    """A chat-based LLM."""
+
+    def __init__(
+        self,
+        client: OpenAIClient,
+        model: str | OpenAIChatModel,
+        *,
+        variable_injector: VariableInjector | None = None,
+        rate_limiter: RateLimiter[
+            OpenAIChatCompletionInput,
+            OpenAIStreamingChatOutput,
+            OpenAIChatHistoryEntry,
+            OpenAIChatParameters,
+        ]
+        | None = None,
+        retryer: Retryer[
+            OpenAIChatCompletionInput,
+            OpenAIStreamingChatOutput,
+            OpenAIChatHistoryEntry,
+            OpenAIChatParameters,
+        ]
+        | None = None,
+        emit_usage: bool = False,
+        model_parameters: OpenAIChatParameters | None = None,
+        events: LLMEvents | None = None,
+    ):
+        """Create a new OpenAIChatLLM."""
+        super().__init__(
+            events=events,
+            variable_injector=variable_injector,
+            rate_limiter=rate_limiter,
+            retryer=retryer,
+        )
+
+        self._client = client
+        self._model = model
+        self._emit_usage = emit_usage
+        self._global_model_parameters = model_parameters or {}
+
+    def child(self, name: str) -> "OpenAIStreamingChatLLMImpl":
+        """Create a child LLM."""
+        return self
+
+    def _build_completion_parameters(
+        self, local_parameters: OpenAIChatParameters | None
+    ) -> OpenAIChatParameters:
+        params: OpenAIChatParameters = {
+            "model": self._model,
+            **self._global_model_parameters,
+            **(local_parameters or {}),
+        }
+
+        return params
+
+    async def _execute_llm(
+        self,
+        prompt: OpenAIChatCompletionInput,
+        **kwargs: Unpack[
+            LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters]
+        ],
+    ) -> OpenAIStreamingChatOutput:
+        history = kwargs.get("history", [])
+        local_model_parameters = kwargs.get("model_parameters")
+        messages, prompt_message = build_chat_messages(prompt, history)
+        completion_parameters = self._build_completion_parameters(
+            local_model_parameters
+        )
+
+        completion_kwargs = {**completion_parameters, "stream": True}
+        if self._emit_usage:
+            completion_kwargs["stream_options"] = {"include_usage": True}
+
+        completion: ChunkStream = await self._client.chat.completions.create(
+            messages=cast(Iterator[ChatCompletionMessageParam], messages),
+            **completion_kwargs,
+        )
+
+        iterator = StreamingChatIterator(chunks=completion, events=self._events)
+        result = OpenAIStreamingChatOutput(
+            raw_input=prompt_message,
+            content=iterator.iterator,
+            close=iterator.close,
+        )
+
+        def handle_usage(usage: LLMUsageMetrics) -> None:
+            result.usage = usage
+
+        iterator.on_usage(handle_usage)
+        return result
+
+
+class StreamingChatIterator:
+    """A streaming llm response iterator."""
+
+    def __init__(
+        self,
+        chunks: ChunkStream,
+        events: LLMEvents,
+    ):
+        """Create a new Response."""
+        self._chunks = chunks
+        self._events = events
+        self._iterator = self.__stream__()
+
+    def on_usage(self, cb: Callable[[LLMUsageMetrics], None]) -> None:
+        """Handle usage events."""
+        self._on_usage = cb
+
+    async def __stream__(self) -> AsyncIterator[str | None]:
+        """Read chunks from the stream."""
+        usage = LLMUsageMetrics()
+        try:
+            async for chunk in self._chunks:
+                # Note: this is only emitted _just_ prior to the stream completing.
+                if chunk.usage:
+                    usage = LLMUsageMetrics(
+                        input_tokens=chunk.usage.prompt_tokens,
+                        output_tokens=chunk.usage.completion_tokens,
+                    )
+                    if self._on_usage:
+                        self._on_usage(usage)
+                    await self._events.on_usage(usage)
+
+                if chunk.choices and len(chunk.choices) > 0:
+                    yield chunk.choices[0].delta.content
+        except BaseException as e:
+            stack_trace = traceback.format_exc()
+            await self._events.on_error(e, stack_trace, {"streaming": True})
+            raise
+
+        self._on_usage = None
+        await self._events.on_success(
+            LLMMetrics(
+                estimated_input_tokens=usage.input_tokens,
+                usage=usage,
+            )
+        )
+
+    @property
+    def iterator(self) -> AsyncIterator[str | None]:
+        """Return the content."""
+        return self._iterator
+
+    async def close(self) -> None:
+        """Close the stream."""
+        await self._chunks.close()
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/services/usage_extractor.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""LLM metrics parsing module for OpenAI."""
+
+from typing import Generic, TypeVar
+
+from fnllm.openai.types.chat.io import OpenAIChatOutput
+from fnllm.openai.types.embeddings.io import OpenAIEmbeddingsOutput
+from fnllm.services.usage_extractor import UsageExtractor
+from fnllm.types.metrics import LLMUsageMetrics
+
+TOutputWithUsageMetrics = TypeVar(
+    "TOutputWithUsageMetrics", OpenAIChatOutput, OpenAIEmbeddingsOutput
+)
+"""Represents the support output types for usage metrics parsing."""
+
+
+class OpenAIUsageExtractor(
+    UsageExtractor[TOutputWithUsageMetrics],
+    Generic[TOutputWithUsageMetrics],
+):
+    """An OpenAI usage metrics parsing LLM."""
+
+    def extract_usage(self, output: TOutputWithUsageMetrics) -> LLMUsageMetrics:
+        """Extract the LLM Usage from an OpenAI response."""
+        return output.usage or LLMUsageMetrics()
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/services/rate_limiter.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""Rate limiting LLM implementation for OpenAI."""
+
+import json
+from typing import Final, Generic
+
+from openai import APIConnectionError, InternalServerError, RateLimitError
+from tiktoken import Encoding
+
+from fnllm.events.base import LLMEvents
+from fnllm.limiting import Limiter
+from fnllm.openai.llm.utils import llm_tools_to_param
+from fnllm.services.rate_limiter import RateLimiter
+from fnllm.types.generics import (
+    THistoryEntry,
+    TInput,
+    TJsonModel,
+    TModelParameters,
+    TOutput,
+)
+from fnllm.types.io import LLMInput
+
+OPENAI_RETRYABLE_ERRORS: Final[list[type[Exception]]] = [
+    RateLimitError,
+    APIConnectionError,
+    InternalServerError,
+]
+
+
+class OpenAIRateLimiter(
+    RateLimiter[TInput, TOutput, THistoryEntry, TModelParameters],
+    Generic[TInput, TOutput, THistoryEntry, TModelParameters],
+):
+    """A base class to rate limit the LLM."""
+
+    def __init__(
+        self,
+        limiter: Limiter,
+        encoder: Encoding,
+        *,
+        events: LLMEvents | None = None,
+    ):
+        """Create a new BaseRateLimitLLM."""
+        super().__init__(
+            limiter,
+            events=events,
+        )
+        self._encoding = encoder
+
+    def _estimate_request_tokens(
+        self,
+        prompt: TInput,
+        kwargs: LLMInput[TJsonModel, THistoryEntry, TModelParameters],
+    ) -> int:
+        history = kwargs.get("history", [])
+        tools = llm_tools_to_param(kwargs.get("tools", []))
+
+        return sum(
+            len(self._encoding.encode(json.dumps(entry)))
+            for entry in (*history, *tools, prompt)
+        )
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/services/__init__.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""Package with OpenAI specific features to be used to wrap base LLM protocol interfaces."""
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/services/retryer.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""Rate limiting LLM implementation for OpenAI."""
+
+import asyncio
+from typing import Final, Generic
+
+from openai import APIConnectionError, InternalServerError, RateLimitError
+
+from fnllm.events.base import LLMEvents
+from fnllm.services.retryer import Retryer
+from fnllm.types.generics import THistoryEntry, TInput, TModelParameters, TOutput
+
+OPENAI_RETRYABLE_ERRORS: Final[list[type[Exception]]] = [
+    RateLimitError,
+    APIConnectionError,
+    InternalServerError,
+]
+
+
+class OpenAIRetryer(
+    Retryer[TInput, TOutput, THistoryEntry, TModelParameters],
+    Generic[TInput, TOutput, THistoryEntry, TModelParameters],
+):
+    """A base class to rate limit the LLM."""
+
+    def __init__(
+        self,
+        *,
+        tag: str = "OpenAIRetryingLLM",
+        max_retries: int = 10,
+        max_retry_wait: float = 10,
+        sleep_on_rate_limit_recommendation: bool = False,
+        events: LLMEvents | None = None,
+    ):
+        """Create a new BaseRateLimitLLM."""
+        super().__init__(
+            retryable_errors=OPENAI_RETRYABLE_ERRORS,
+            tag=tag,
+            max_retries=max_retries,
+            max_retry_wait=max_retry_wait,
+            events=events,
+        )
+        self._sleep_on_rate_limit_recommendation = sleep_on_rate_limit_recommendation
+
+    async def _on_retryable_error(self, error: BaseException) -> None:
+        sleep_recommendation = self._extract_sleep_recommendation(error)
+        if sleep_recommendation > 0:
+            await asyncio.sleep(sleep_recommendation)
+
+    def _extract_sleep_recommendation(self, error: BaseException) -> float:
+        """Extract the sleep time value from a RateLimitError. This is usually only available in Azure."""
+        please_retry_after_msg: Final = "Rate limit is exceeded. Try again in "
+
+        if not self._sleep_on_rate_limit_recommendation:
+            return 0
+
+        error_str = str(error)
+
+        if (
+            not isinstance(error, RateLimitError)
+            or please_retry_after_msg not in error_str
+        ):
+            return 0
+
+        # could be second or seconds
+        return int(error_str.split(please_retry_after_msg)[1].split(" second")[0])
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/services/history_extractor.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""LLM history tracking module for OpenAI."""
+
+from collections.abc import Sequence
+
+from fnllm.openai.llm.utils import chat_completion_message_to_param
+from fnllm.openai.types.chat.io import OpenAIChatHistoryEntry, OpenAIChatOutput
+from fnllm.services.history_extractor import HistoryExtractor
+
+
+class OpenAIHistoryExtractor(
+    HistoryExtractor[OpenAIChatOutput, OpenAIChatHistoryEntry]
+):
+    """An OpenAI history-tracking LLM."""
+
+    def extract_history(
+        self,
+        history: Sequence[OpenAIChatHistoryEntry] | None,
+        output: OpenAIChatOutput,
+    ) -> list[OpenAIChatHistoryEntry]:
+        """Call the LLM."""
+        result = [*history] if history else []
+
+        if output.raw_input is not None:
+            result.append(output.raw_input)
+
+        result.append(chat_completion_message_to_param(output.raw_output))
+
+        return result
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/llm/services/json.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+"""OpenAI JSON Handler."""
+
+from fnllm.config.json_strategy import JsonStrategy
+from fnllm.openai.types.chat.io import (
+    OpenAIChatCompletionInput,
+    OpenAIChatHistoryEntry,
+    OpenAIChatOutput,
+)
+from fnllm.openai.types.chat.parameters import OpenAIChatParameters
+from fnllm.services.json import (
+    JsonHandler,
+    JsonMarshaler,
+    JsonReceiver,
+    JsonRequester,
+    LooseModeJsonReceiver,
+)
+from fnllm.types.generics import TJsonModel
+from fnllm.types.io import LLMInput, LLMOutput
+
+
+def create_json_handler(
+    strategy: JsonStrategy,
+    max_retries: int,
+) -> JsonHandler[OpenAIChatOutput, OpenAIChatHistoryEntry]:
+    """Create a JSON handler for OpenAI."""
+    marshaler = OpenAIJsonMarshaler()
+    match strategy:
+        case JsonStrategy.LOOSE:
+            return JsonHandler(None, LooseModeJsonReceiver(marshaler, max_retries))
+        case JsonStrategy.VALID:
+            return JsonHandler(
+                OpenAIJsonRequester(), JsonReceiver(marshaler, max_retries)
+            )
+        case JsonStrategy.STRUCTURED:
+            raise NotImplementedError
+
+
+class OpenAIJsonMarshaler(JsonMarshaler[OpenAIChatOutput, OpenAIChatHistoryEntry]):
+    """An OpenAI JSON marshaler."""
+
+    def inject_json_string(
+        self,
+        json_string: str | None,
+        output: LLMOutput[OpenAIChatOutput, TJsonModel, OpenAIChatHistoryEntry],
+    ) -> LLMOutput[OpenAIChatOutput, TJsonModel, OpenAIChatHistoryEntry]:
+        """Inject the JSON string into the output."""
+        output.output.content = json_string
+        return output
+
+    def extract_json_string(
+        self, output: LLMOutput[OpenAIChatOutput, TJsonModel, OpenAIChatHistoryEntry]
+    ) -> str | None:
+        """Extract the JSON string from the output."""
+        return output.output.content
+
+
+class OpenAIJsonRequester(
+    JsonRequester[
+        OpenAIChatCompletionInput,
+        OpenAIChatOutput,
+        OpenAIChatHistoryEntry,
+        OpenAIChatParameters,
+    ]
+):
+    """An OpenAI JSON requester."""
+
+    def rewrite_args(
+        self,
+        prompt: OpenAIChatCompletionInput,
+        kwargs: LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters],
+    ) -> tuple[
+        OpenAIChatCompletionInput,
+        LLMInput[TJsonModel, OpenAIChatHistoryEntry, OpenAIChatParameters],
+    ]:
+        """Rewrite the input prompt and arguments.."""
+        kwargs["model_parameters"] = self._enable_oai_json_mode(
+            kwargs.get("model_parameters", {})
+        )
+        return prompt, kwargs
+
+    def _enable_oai_json_mode(
+        self, parameters: OpenAIChatParameters
+    ) -> OpenAIChatParameters:
+        result: OpenAIChatParameters = parameters.copy()
+        result["response_format"] = {"type": "json_object"}
+        return result
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/config.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+
+"""OpenAI Configuration class definition."""
+
+from typing import Annotated, Literal
+
+from pydantic import Field
+
+from fnllm.config import Config
+from fnllm.openai.types.chat.parameters import OpenAIChatParameters
+from fnllm.openai.types.embeddings.parameters import OpenAIEmbeddingsParameters
+
+
+class CommonOpenAIConfig(Config, frozen=True, extra="allow", protected_namespaces=()):
+    """Common configuration parameters between Azure OpenAI and Public OpenAI."""
+
+    azure: bool = Field(default=False, description="Whether to use Azure OpenAI.")
+
+    api_key: str | None = Field(default=None, description="The OpenAI API key.")
+
+    track_stream_usage: bool = Field(
+        default=False, description="Whether to emit stream usage."
+    )
+
+    organization: str | None = Field(
+        default=None, description="The OpenAI organization."
+    )
+
+    timeout: float | None = Field(default=None, description="The request timeout.")
+
+    model: str = Field(default="", description="The OpenAI model to use.")
+
+    encoding: str = Field(default="cl100k_base", description="The encoding model.")
+
+    chat_parameters: OpenAIChatParameters = Field(
+        default_factory=dict,
+        description="Global chat parameters to be used across calls.",
+    )
+
+    embeddings_parameters: OpenAIEmbeddingsParameters = Field(
+        default_factory=dict,
+        description="Global embeddings parameters to be used across calls.",
+    )
+
+    sleep_on_rate_limit_recommendation: bool = Field(
+        default=False,
+        description="Whether to sleep on rate limit recommendation.",
+    )
+
+
+class PublicOpenAIConfig(
+    CommonOpenAIConfig, frozen=True, extra="allow", protected_namespaces=()
+):
+    """Public OpenAI configuration definition."""
+
+    azure: Literal[False] = Field(
+        default=False, description="Whether to use Azure OpenAI."
+    )
+
+    base_url: str | None = Field(default=None, description="The OpenAI API base URL.")
+
+
+class AzureOpenAIConfig(
+    CommonOpenAIConfig, frozen=True, extra="allow", protected_namespaces=()
+):
+    """Azure OpenAI configuration definition."""
+
+    azure: Literal[True] = Field(
+        default=True, description="Whether to use Azure OpenAI."
+    )
+
+    endpoint: str = Field(description="The OpenAI API endpoint.")
+
+    deployment: str | None = Field(
+        default=None, description="The Azure deployment name."
+    )
+
+    api_version: str | None = Field(description="The OpenAI API version.")
+
+    cognitive_services_endpoint: str = Field(
+        default="https://cognitiveservices.azure.com/.default",
+        description="The Azure Cognitive Services endpoint.",
+    )
+
+
+OpenAIConfig = Annotated[
+    PublicOpenAIConfig | AzureOpenAIConfig, Field(discriminator="azure")
+]
+"""OpenAI configuration definition."""
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/roles.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""OpenAI specific roles."""
+
+from collections.abc import Sequence
+from string import Template
+from typing import Any, Final
+
+from fnllm.openai.types.aliases import (
+    OpenAIChatCompletionAssistantMessageParam,
+    OpenAIChatCompletionFunctionMessageParam,
+    OpenAIChatCompletionMessageToolCallParam,
+    OpenAIChatCompletionSystemMessageParam,
+    OpenAIChatCompletionToolMessageParam,
+    OpenAIChatCompletionUserMessageParam,
+    OpenAIFunctionCallParam,
+)
+
+
+class _OpenAIBaseRole:
+    """OpenAI base class for roles."""
+
+    role = "user"
+
+    def _substitute_template(
+        self, value: str | Template, variables: dict[str, Any] | None
+    ) -> str:
+        if isinstance(value, Template):
+            return value.substitute(**(variables or {}))
+
+        if variables:
+            return Template(value).substitute(**variables)
+
+        return value
+
+    def __str__(self) -> str:
+        """String representation of the role."""
+        return self.role
+
+    def __hash__(self) -> int:
+        """Hash representation of the role."""
+        return hash(self.role)
+
+
+class _OpenAISystemRole(_OpenAIBaseRole):
+    """OpenAI system role."""
+
+    role: Final = "system"
+
+    def message(
+        self,
+        content: str | Template,
+        *,
+        name: str | None = None,
+        variables: dict[str, Any] | None = None,
+    ) -> OpenAIChatCompletionSystemMessageParam:
+        """Create a message for the given role."""
+        msg = OpenAIChatCompletionSystemMessageParam(
+            content=self._substitute_template(content, variables), role=self.role
+        )
+
+        if name is not None:
+            msg["name"] = name
+
+        return msg
+
+
+class _OpenAIUserRole(_OpenAIBaseRole):
+    """OpenAI user role."""
+
+    role: Final = "user"
+
+    def message(
+        self,
+        content: str | Template,
+        *,
+        name: str | None = None,
+        variables: dict[str, Any] | None = None,
+    ) -> OpenAIChatCompletionUserMessageParam:
+        """Create a message for the given role."""
+        msg = OpenAIChatCompletionUserMessageParam(
+            content=self._substitute_template(content, variables), role=self.role
+        )
+
+        if name is not None:
+            msg["name"] = name
+
+        return msg
+
+
+class _OpenAIAssistantRole(_OpenAIBaseRole):
+    """OpenAI assistant role."""
+
+    role: Final = "assistant"
+
+    def message(
+        self,
+        content: str | Template | None = None,
+        *,
+        tool_calls: Sequence[OpenAIChatCompletionMessageToolCallParam] | None = None,
+        function_call: OpenAIFunctionCallParam | None = None,
+        name: str | None = None,
+        variables: dict[str, Any] | None = None,
+    ) -> OpenAIChatCompletionAssistantMessageParam:
+        """Create a message for the given role."""
+        msg = OpenAIChatCompletionAssistantMessageParam(
+            content=self._substitute_template(content, variables)
+            if content is not None
+            else None,
+            role=self.role,
+        )
+
+        if tool_calls is not None:
+            msg["tool_calls"] = tool_calls
+
+        if function_call is not None:
+            msg["function_call"] = function_call
+
+        if name is not None:
+            msg["name"] = name
+
+        return msg
+
+
+class _OpenAIToolRole(_OpenAIBaseRole):
+    """OpenAI tool role."""
+
+    role: Final = "tool"
+
+    def message(
+        self,
+        content: str | Template,
+        tool_call_id: str,
+        *,
+        variables: dict[str, Any] | None = None,
+    ) -> OpenAIChatCompletionToolMessageParam:
+        """Create a message for the given role."""
+        return OpenAIChatCompletionToolMessageParam(
+            content=self._substitute_template(content, variables),
+            tool_call_id=tool_call_id,
+            role=self.role,
+        )
+
+
+class _OpenAIFunctionRole(_OpenAIBaseRole):
+    """OpenAI function role."""
+
+    role: Final = "function"
+
+    def message(
+        self,
+        content: str | Template,
+        name: str,
+        *,
+        variables: dict[str, Any] | None = None,
+    ) -> OpenAIChatCompletionFunctionMessageParam:
+        """Create a message for the given role."""
+        return OpenAIChatCompletionFunctionMessageParam(
+            content=self._substitute_template(content, variables),
+            name=name,
+            role=self.role,
+        )
+
+
+class OpenAIChatRole:
+    """OpenAI chat roles."""
+
+    System: Final = _OpenAISystemRole()
+
+    User: Final = _OpenAIUserRole()
+
+    Assistant: Final = _OpenAIAssistantRole()
+
+    Tool: Final = _OpenAIToolRole()
+
+    Function: Final = _OpenAIFunctionRole()
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/__init__.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+
+"""OpenAI LLM implementations."""
+
+from .config import AzureOpenAIConfig, OpenAIConfig, PublicOpenAIConfig
+from .factories import (
+    create_openai_chat_llm,
+    create_openai_client,
+    create_openai_embeddings_llm,
+)
+from .roles import OpenAIChatRole
+from .types.client import (
+    OpenAIClient,
+    OpenAIEmbeddingsLLM,
+    OpenAIStreamingChatLLM,
+    OpenAITextChatLLM,
+)
+
+# TODO: include type aliases?
+__all__ = [
+    "AzureOpenAIConfig",
+    "OpenAIChatRole",
+    "OpenAIClient",
+    "OpenAIConfig",
+    "OpenAIConfig",
+    "OpenAIEmbeddingsLLM",
+    "OpenAIStreamingChatLLM",
+    "OpenAITextChatLLM",
+    "PublicOpenAIConfig",
+    "create_openai_chat_llm",
+    "create_openai_client",
+    "create_openai_embeddings_llm",
+]
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/factories/client.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""Create OpenAI client instance."""
+
+from typing import cast
+
+from openai import AsyncAzureOpenAI, AsyncOpenAI
+
+from fnllm.openai.config import AzureOpenAIConfig, OpenAIConfig, PublicOpenAIConfig
+from fnllm.openai.types.client import OpenAIClient
+
+
+def create_openai_client(config: OpenAIConfig) -> OpenAIClient:
+    """Create a new OpenAI client instance."""
+    if config.azure:
+        from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+
+        config = cast(AzureOpenAIConfig, config)
+
+        token_provider = (
+            get_bearer_token_provider(
+                DefaultAzureCredential(), config.cognitive_services_endpoint
+            )
+            if not config.api_key
+            else None
+        )
+
+        return AsyncAzureOpenAI(
+            api_key=config.api_key,
+            azure_ad_token_provider=token_provider,
+            organization=config.organization,
+            # Azure-Specifics
+            api_version=config.api_version,
+            azure_endpoint=config.endpoint,
+            azure_deployment=config.deployment,
+            timeout=config.timeout,
+            max_retries=0,
+        )
+
+    config = cast(PublicOpenAIConfig, config)
+
+    return AsyncOpenAI(
+        api_key=config.api_key,
+        base_url=config.base_url,
+        organization=config.organization,
+        timeout=config.timeout,
+        max_retries=0,
+    )
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/factories/__init__.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""Methods to create OpenAI instances."""
+
+from .chat import create_openai_chat_llm
+from .client import create_openai_client
+from .embeddings import create_openai_embeddings_llm
+
+__all__ = [
+    "create_openai_chat_llm",
+    "create_openai_client",
+    "create_openai_embeddings_llm",
+]
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/factories/chat.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""Factory functions for creating OpenAI LLMs."""
+
+from fnllm.caching.base import Cache
+from fnllm.events.base import LLMEvents
+from fnllm.limiting.base import Limiter
+from fnllm.openai.config import OpenAIConfig
+from fnllm.openai.llm.chat import OpenAIChatLLMImpl
+from fnllm.openai.llm.chat_streaming import OpenAIStreamingChatLLMImpl
+from fnllm.openai.llm.chat_text import OpenAITextChatLLMImpl
+from fnllm.openai.llm.features.tools_parsing import OpenAIParseToolsLLM
+from fnllm.openai.llm.services.history_extractor import OpenAIHistoryExtractor
+from fnllm.openai.llm.services.json import create_json_handler
+from fnllm.openai.llm.services.usage_extractor import OpenAIUsageExtractor
+from fnllm.openai.types.client import (
+    OpenAIChatLLM,
+    OpenAIClient,
+    OpenAIStreamingChatLLM,
+    OpenAITextChatLLM,
+)
+from fnllm.services.cache_interactor import CacheInteractor
+from fnllm.services.variable_injector import VariableInjector
+
+from .client import create_openai_client
+from .utils import create_limiter, create_rate_limiter, create_retryer
+
+
+def create_openai_chat_llm(
+    config: OpenAIConfig,
+    *,
+    client: OpenAIClient | None = None,
+    cache: Cache | None = None,
+    cache_interactor: CacheInteractor | None = None,
+    events: LLMEvents | None = None,
+) -> OpenAIChatLLM:
+    """Create an OpenAI chat LLM."""
+    if client is None:
+        client = create_openai_client(config)
+
+    limiter = create_limiter(config)
+
+    text_chat_llm = _create_openai_text_chat_llm(
+        client=client,
+        config=config,
+        cache=cache,
+        cache_interactor=cache_interactor,
+        events=events,
+        limiter=limiter,
+    )
+    streaming_chat_llm = _create_openai_streaming_chat_llm(
+        client=client,
+        config=config,
+        events=events,
+        limiter=limiter,
+    )
+    return OpenAIChatLLMImpl(
+        text_chat_llm=text_chat_llm,
+        streaming_chat_llm=streaming_chat_llm,
+    )
+
+
+def _create_openai_text_chat_llm(
+    *,
+    client: OpenAIClient,
+    config: OpenAIConfig,
+    limiter: Limiter,
+    cache: Cache | None,
+    cache_interactor: CacheInteractor | None,
+    events: LLMEvents | None,
+) -> OpenAITextChatLLM:
+    operation = "chat"
+    result = OpenAITextChatLLMImpl(
+        client,
+        model=config.model,
+        model_parameters=config.chat_parameters,
+        cache=cache_interactor or CacheInteractor(events, cache),
+        events=events,
+        json_handler=create_json_handler(config.json_strategy, config.max_json_retries),
+        usage_extractor=OpenAIUsageExtractor(),
+        history_extractor=OpenAIHistoryExtractor(),
+        variable_injector=VariableInjector(),
+        retryer=create_retryer(config=config, operation=operation, events=events),
+        rate_limiter=create_rate_limiter(config=config, limiter=limiter, events=events),
+    )
+
+    return OpenAIParseToolsLLM(result)
+
+
+def _create_openai_streaming_chat_llm(
+    *,
+    client: OpenAIClient,
+    config: OpenAIConfig,
+    limiter: Limiter,
+    events: LLMEvents | None,
+) -> OpenAIStreamingChatLLM:
+    """Create an OpenAI streaming chat LLM."""
+    return OpenAIStreamingChatLLMImpl(
+        client,
+        model=config.model,
+        model_parameters=config.chat_parameters,
+        events=events,
+        emit_usage=config.track_stream_usage,
+        variable_injector=VariableInjector(),
+        rate_limiter=create_rate_limiter(limiter=limiter, config=config, events=events),
+    )
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/factories/embeddings.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""Factory functions for creating OpenAI LLMs."""
+
+from fnllm.caching.base import Cache
+from fnllm.events.base import LLMEvents
+from fnllm.openai.config import OpenAIConfig
+from fnllm.openai.llm.embeddings import OpenAIEmbeddingsLLMImpl
+from fnllm.openai.llm.services.usage_extractor import OpenAIUsageExtractor
+from fnllm.openai.types.client import OpenAIClient, OpenAIEmbeddingsLLM
+from fnllm.services.cache_interactor import CacheInteractor
+from fnllm.services.variable_injector import VariableInjector
+
+from .client import create_openai_client
+from .utils import create_limiter, create_rate_limiter, create_retryer
+
+
+def create_openai_embeddings_llm(
+    config: OpenAIConfig,
+    *,
+    client: OpenAIClient | None = None,
+    cache: Cache | None = None,
+    cache_interactor: CacheInteractor | None = None,
+    events: LLMEvents | None = None,
+) -> OpenAIEmbeddingsLLM:
+    """Create an OpenAI embeddings LLM."""
+    operation = "embedding"
+
+    if client is None:
+        client = create_openai_client(config)
+
+    limiter = create_limiter(config)
+    return OpenAIEmbeddingsLLMImpl(
+        client,
+        model=config.model,
+        model_parameters=config.embeddings_parameters,
+        cache=cache_interactor or CacheInteractor(events, cache),
+        events=events,
+        usage_extractor=OpenAIUsageExtractor(),
+        variable_injector=VariableInjector(),
+        rate_limiter=create_rate_limiter(config=config, events=events, limiter=limiter),
+        retryer=create_retryer(config=config, operation=operation, events=events),
+    )
+
+================== /Users/abdelmajidboubrik/Library/DataScienceStudio/dss_home/code-envs/python/graphrag/lib/python3.10/site-packages/fnllm/openai/factories/utils.py ==================
+# Copyright (c) 2024 Microsoft Corporation.
+
+"""Helper functions for creating OpenAI LLMs."""
+
+from typing import Any
+
+import tiktoken
+
+from fnllm.events.base import LLMEvents
+from fnllm.limiting.base import Limiter
+from fnllm.limiting.composite import CompositeLimiter
+from fnllm.limiting.concurrency import ConcurrencyLimiter
+from fnllm.limiting.rpm import RPMLimiter
+from fnllm.limiting.tpm import TPMLimiter
+from fnllm.openai.config import OpenAIConfig
+from fnllm.openai.llm.services.rate_limiter import OpenAIRateLimiter
+from fnllm.openai.llm.services.retryer import OpenAIRetryer
+from fnllm.services.rate_limiter import RateLimiter
+from fnllm.services.retryer import Retryer
+
+
+def _get_encoding(encoding_name: str) -> tiktoken.Encoding:
+    return tiktoken.get_encoding(encoding_name)
+
+
+def create_limiter(config: OpenAIConfig) -> Limiter:
+    """Create an LLM limiter based on the incoming configuration."""
+    limiters = []
+
+    if config.max_concurrency:
+        limiters.append(ConcurrencyLimiter.from_max_concurrency(config.max_concurrency))
+
+    if config.requests_per_minute:
+        limiters.append(
+            RPMLimiter.from_rpm(
+                config.requests_per_minute, burst_mode=config.requests_burst_mode
+            )
+        )
+
+    if config.tokens_per_minute:
+        limiters.append(TPMLimiter.from_tpm(config.tokens_per_minute))
+
+    return CompositeLimiter(limiters)
+
+
+def create_rate_limiter(
+    *,
+    limiter: Limiter,
+    config: OpenAIConfig,
+    events: LLMEvents | None,
+) -> RateLimiter[Any, Any, Any, Any]:
+    """Wraps the LLM to be rate limited."""
+    return OpenAIRateLimiter(
+        encoder=_get_encoding(config.encoding),
+        limiter=limiter,
+        events=events,
+    )
+
+
+def create_retryer(
+    *,
+    config: OpenAIConfig,
+    operation: str,
+    events: LLMEvents | None,
+) -> Retryer[Any, Any, Any, Any]:
+    """Wraps the LLM with retry logic."""
+    return OpenAIRetryer(
+        tag=operation,
+        max_retries=config.max_retries,
+        max_retry_wait=config.max_retry_wait,
+        sleep_on_rate_limit_recommendation=config.sleep_on_rate_limit_recommendation,
+        events=events,
+    )
+

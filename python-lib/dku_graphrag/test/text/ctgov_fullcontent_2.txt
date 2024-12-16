@@ -1,0 +1,86 @@
+# NCTId
+NCT04657016
+# study_url
+https://www.clinicaltrials.gov/study/NCT04657016
+# BriefTitle
+A Study of Tirzepatide (LY3298176) In Participants After A Lifestyle Weight Loss Program
+# OfficialTitle
+Efficacy and Safety of Tirzepatide Once Weekly Versus Placebo After an Intensive Lifestyle Program in Participants Without Type 2 Diabetes Who Have Obesity or Are Overweight With Weight-Related Comorbidities: A Randomized, Double Blind, Placebo-Controlled Trial (SURMOUNT-3)
+# OverallStatus
+COMPLETED
+# StartDate
+2021-03-29
+# PrimaryCompletionDate
+2023-04-20
+# CompletionDate
+2023-05-12
+# LeadSponsorName
+Eli Lilly and Company
+# LeadSponsorClass
+INDUSTRY
+# BriefSummary
+This is a study of tirzepatide in participants with obesity. The purpose of this study is to learn more about how tirzepatide maintains body weight or adds to weight loss after an intensive lifestyle modification program. The study will last about 2 years (29 visits).
+# StudyType
+INTERVENTIONAL
+# Phase
+['PHASE3']
+# DesignAllocation
+RANDOMIZED
+# DesignInterventionModel
+PARALLEL
+# DesignPrimaryPurpose
+TREATMENT
+# DesignMasking
+DOUBLE
+# EnrollmentCount
+579
+# EnrollmentType
+ACTUAL
+# HealthyVolunteers
+False
+# Sex
+ALL
+# StdAge
+['ADULT', 'OLDER_ADULT']
+# collaborators
+
+# officials
+Call 1-877-CTLILLY (1-877-285-4559) or 1-317-615-4559 Mon - Fri 9 AM - 5 PM Eastern time (UTC/GMT - 5 hours, EST) - Eli Lilly and Company (STUDY_DIRECTOR)
+# clinical_site_contact
+Catalina Research Institute, LLC (NA), Montclair, California, 91763, United States | University of North Carolina Medical Center (NA), Chapel Hill, North Carolina, 27514, United States | Wake Forest University Baptist Medical Center (WFUBMC) (NA), Winston-Salem, North Carolina, 27157, United States | Southern Endocrinology Associates (NA), Mesquite, Texas, 75149, United States | Health Research of Hampton Roads, Inc. (NA), Newport News, Virginia, 23606, United States | Holston Medical Group (NA), Bristol, Tennessee, 37620, United States | American Health Network of IN, LLC (NA), Avon, Indiana, 46123, United States | Intend Research, LLC (NA), Norman, Oklahoma, 73069, United States | Metabolic Research Institute, Inc. (NA), West Palm Beach, Florida, 33401, United States | Clinical Research of South Florida (NA), Coral Gables, Florida, 33134, United States | Instituto Centenario (NA), Caba, Buenos Aires, C1204AAD, Argentina | The National Diabetes & Obesity Research Institute (NA), Biloxi, Mississippi, 39532, United States | Vanderbilt Health One Hundred Oaks (NA), Nashville, Tennessee, 37204, United States | Cleveland Clinic Foundation (NA), Cleveland, Ohio, 44122, United States | IBPClin - Instituto Brasil de Pesquisa Clínica (NA), Rio de Janeiro, , 22241-180, Brazil | Elite Clinical Trials (NA), Rexburg, Idaho, 83440, United States | Quanta Diagnóstico e Terapia (NA), Curitiba, Paraná, 80040-110, Brazil | CEPIC - Centro Paulista de Investigação Clínica (NA), São Paulo, , 04266-010, Brazil | Precision Clinical Research (NA), Sunrise, Florida, 33351, United States | Manati Center for Clinical Research (NA), Manati, , 674, Puerto Rico | Cline Research Center (NA), Curitiba, Paraná, 80030-480, Brazil | Instituto Médico Especializado (IME) (NA), Buenos Aires, , 1405, Argentina | MultiCare Institute for Research & Innovation (NA), Tacoma, Washington, 98405, United States | Tandem Clinical Research,LLC (NA), Marrero, Louisiana, 70072, United States | Clinical Research of West Florida (NA), Tampa, Florida, 33606, United States | Centro de Investigaciones Metabólicas (CINME) (NA), Ciudad Autónoma de Buenos Aire, Buenos Aires, 1056, Argentina | Summit Research Network (NA), Portland, Oregon, 97210, United States | American Health Network of IN, LLC (NA), Muncie, Indiana, 47304, United States | Penn Medicine: University of Pennsylvania Health System (NA), Philadelphia, Pennsylvania, 19104, United States | Stat Research S.A. (NA), Ciudad Autónoma de Buenos Aire, Buenos Aires, C1023AAB, Argentina | PharmQuest (NA), Greensboro, North Carolina, 27408, United States | Juno Research (NA), Houston, Texas, 77040, United States | Texas Diabetes & Endocrinology, P.A. (NA), Round Rock, Texas, 78681, United States | Elite Clinical Trials (NA), Blackfoot, Idaho, 83221, United States | Chase Medical Research, LLC (NA), Waterbury, Connecticut, 6708, United States | Advanced Clinical Research, LLC (NA), Bayamon, , 961, Puerto Rico | National Research Institute - Huntington Park (NA), Huntington Park, California, 90255, United States | National Research Institute - Wilshire (NA), Los Angeles, California, 90057, United States | Encompass Clinical Research (NA), Spring Valley, California, 91978, United States | Detweiler Family Medicine & Associates (NA), Lansdale, Pennsylvania, 19446, United States | New Horizon Research Center (NA), Miami, Florida, 33165, United States | Preferred Primary Care Physicians, Preferred Clinical Research-St. Clair (NA), Pittsburgh, Pennsylvania, 15243, United States | Clinvest Research LLC (NA), Springfield, Missouri, 65810, United States | Evanston Premier Healthcare Research LLC (NA), Evanston, Illinois, 60201, United States | Cotton O'Neil Mulvane (NA), Topeka, Kansas, 66606, United States | CPQuali Pesquisa Clínica (NA), São Paulo, , 01228-000, Brazil | Consano Clinical Research, LLC (NA), Shavano Park, Texas, 78231, United States | Quality Clinical Research (NA), Omaha, Nebraska, 68114, United States | CEDOES (NA), Vitória, Espírito Santo, 29055450, Brazil | Ponce Medical School Foundation Inc. (NA), Ponce, , 716, Puerto Rico | Dallas Diabetes Research Center (NA), Dallas, Texas, 75230, United States | Sanatorio Norte (NA), Santiago del Estero, , 4200, Argentina | CPCLIN (NA), Sao Paulo, São Paulo, 01228-200, Brazil | Diablo Clinical Research, Inc. (NA), Walnut Creek, California, 94598, United States | CEMEDIAB (NA), C.a.b.a., Ciudad Autónoma De Buenos Aire, C1205AAO, Argentina | American Health Network of IN, LLC (NA), Franklin, Indiana, 46131, United States | Glenny Corp (NA), Buenos Aires, Ciudad Autónoma De Buenos Aire, 1430, Argentina | Solaris Clinical Research (NA), Meridian, Idaho, 83646, United States | Centro Médico Viamonte (NA), Caba, Buenos Aires, C1120AAC, Argentina | Investigaciones Medicas Imoba Srl (NA), Caba, Buenos Aires, C1179AAB, Argentina | Palm Research Center Sunset (NA), Las Vegas, Nevada, 89148, United States | Rochester Clinical Research, Inc. (NA), Rochester, New York, 14609, United States | Tribe Clinical Research, LLC (NA), Greenville, South Carolina, 29607, United States | BR Trials - Ensaios Clinicos e Consultoria (NA), Sao Paulo, São Paulo, 03325-050, Brazil | National Research Institute (NRI) - Santa Ana (NA), Santa Ana, California, 92704, United States
+# conditions
+Obesity | Overweight
+# study_corpus
+NCTId: NCT04657016
+
+Status: COMPLETED
+
+Sponsor: Eli Lilly and Company
+
+Phase: ['PHASE3']
+
+Title
+Efficacy and Safety of Tirzepatide Once Weekly Versus Placebo After an Intensive Lifestyle Program in Participants Without Type 2 Diabetes Who Have Obesity or Are Overweight With Weight-Related Comorbidities: A Randomized, Double Blind, Placebo-Controlled Trial (SURMOUNT-3)
+
+Summary
+This is a study of tirzepatide in participants with obesity. The purpose of this study is to learn more about how tirzepatide maintains body weight or adds to weight loss after an intensive lifestyle modification program. The study will last about 2 years (29 visits).
+
+Officials: Call 1-877-CTLILLY (1-877-285-4559) or 1-317-615-4559 Mon - Fri 9 AM - 5 PM Eastern time (UTC/GMT - 5 hours, EST) - Eli Lilly and Company (STUDY_DIRECTOR)Conditions:Obesity | OverweightEnrollment count: 579
+
+Eligibility Criteria
+Inclusion Criteria:
+
+* Have a body mass index (BMI) ≥30 kg/m2 or ≥27 kg/m2 and previously diagnosed with at least 1 of the following comorbidities: hypertension, dyslipidemia, obstructive sleep apnea or cardiovascular disease
+* History of at least one unsuccessful dietary effort to lose body weight
+
+Exclusion Criteria:
+
+* Diabetes mellitus
+* Change in body weight greater than 5 kg within 3 months prior to starting study
+* Obesity induced by other endocrinologic disorders or monogenetic or syndromic forms of obesity
+* History of pancreatitis
+* Family or personal history of medullary thyroid carcinoma (MTC) or multiple endocrine neoplasia syndrome type 2 (MEN-2)
+* History of significant active or unstable major depressive disorder (MDD) or other severe psychiatric disorder within the last 2 years
+* Any lifetime history of a suicide attemptStart Date:2021-03-29Completion Date:2023-05-12
+
+Detailed Description

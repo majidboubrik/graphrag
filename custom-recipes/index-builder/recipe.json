@@ -1,127 +1,70 @@
-// This file is the descriptor for the Custom code recipe index-builder
 {
-    // Meta data for display purposes
     "meta": {
-        // label: name of the recipe as displayed, should be short
-        "label": "Index builder",
-        // description: longer string to help end users understand what this recipe does
-        "description": "Use this recipe to build the graphrag index from unstructured documents",
-        // icon: must be one of the FontAwesome 5.15.4 icons, complete list here at https://fontawesome.com/v5/docs/
+        "label": "Index Builder",
+        "description": "Indexes the content of a dataset with specified settings.",
         "icon": "fas fa-puzzle-piece"
     },
-
     "kind": "PYTHON",
-    
-
-    // Inputs and outputs are defined by roles. In the recipe's I/O tab, the user can associate one
-    // or more dataset to each input and output role.
-
-    // The "arity" field indicates whether the user can associate several datasets to the role ('NARY')
-    // or at most one ('UNARY'). The "required" field indicates whether the user is allowed to
-    // associate no dataset with the role.
-
     "inputRoles": [
         {
-            "name": "input_A_role",
-            "label": "input A displayed name",
-            "description": "what input A means",
+            "name": "input_dataset",
+            "label": "Input Dataset",
+            "description": "The dataset to be indexed.",
             "arity": "UNARY",
             "required": true,
             "acceptsDataset": true
-        },
-        {
-            "name": "input_B_role",
-            "label": "input B displayed name",
-            "description": "what input B means",
-            "arity": "NARY",
-            "required": false,
-            "acceptsDataset": true
-            // ,'mustBeSQL': true
-            // ,'mustBeStrictlyType':'HDFS'
         }
-        // ...
     ],
-
     "outputRoles": [
         {
-            "name": "main_output",
-            "label": "main output displayed name",
-            "description": "what main output means",
+            "name": "output_folder",
+            "label": "Output Managed Folder",
+            "description": "Managed folder where the indexing results will be stored.",
             "arity": "UNARY",
-            "required": false,
-            "acceptsDataset": true
-        },
-        {
-            "name": "errors_output",
-            "label": "errors output displayed name",
-            "description": "what errors output means",
-            "arity": "UNARY",
-            "required": false,
-            "acceptsDataset": true
+            "required": true,
+            "acceptsManagedFolder": true
         }
-        // ...
     ],
-
-    /* The field "params" holds a list of all the params
-       for wich the user will be prompted for values in the Settings tab of the recipe.
-
-       The available parameter types include:
-       STRING, STRINGS, INT, DOUBLE, BOOLEAN, SELECT, MULTISELECT, MAP, TEXTAREA, PRESET, COLUMN, COLUMNS
-
-       For the full list and for more details, see the documentation: https://doc.dataiku.com/dss/latest/plugins/reference/params.html
-    */
-
     "params": [
         {
-            "name": "parameter1",
-            "label": "User-readable label",
-            "type": "STRING",
-            "description": "Some documentation for parameter1",
-            "mandatory": true
-        },
-        {
-            "name": "parameter2",
-            "type": "INT",
-            "defaultValue": 42
-            /* Note that standard json parsing will return it as a double in Python (instead of an int), so you need to write
-               int(get_recipe_config()['parameter2'])
-            */
-        },
-
-        // A "SELECT" parameter is a multi-choice selector. Choices are specified using the selectChoice field
-        {
-            "name": "parameter3",
-            "type": "SELECT",
-            "selectChoices": [
-                {
-                    "value": "val_x",
-                    "label": "display name for val_x"
-                },
-                {
-                    "value": "val_y",
-                    "label": "display name for val_y"
-                }
-            ]
-        },
-
-        // A 'COLUMN' parameter is a string, whose value is a column name from an input schema.
-        // To specify the input schema whose column names are used, use the "columnRole" field like below.
-        // The column names will come from the schema of the first dataset associated to that role.
-        {
-            "name": "parameter4",
+            "name": "text_column",
+            "label": "Text Column",
             "type": "COLUMN",
-            "columnRole": "input_B_role"
+            "description": "The column containing text to be indexed.",
+            "mandatory": true,
+            "columnRole": "input_dataset"
+        },
+        {
+            "name": "attribute_columns",
+            "label": "Attribute Columns",
+            "type": "COLUMNS",
+            "description": "Columns to be used as attributes in the index.",
+            "mandatory": true,
+            "columnRole": "input_dataset"
+        },
+        {
+            "name": "chat_completion_llm",
+            "label": "Chat Completion LLM",
+            "type": "SELECT",
+            "description": "Select the chat completion LLM.",
+            "mandatory": true,
+            "getChoicesFromPython": true
+        },
+        {
+            "name": "embedding_llm",
+            "label": "Embedding LLM",
+            "type": "SELECT",
+            "description": "Select the embedding LLM.",
+            "mandatory": true,
+            "getChoicesFromPython": true
+        },
+        {
+            "name": "verbose_mode",
+            "label": "Verbose Mode",
+            "type": "BOOLEAN",
+            "description": "Enable verbose logging.",
+            "defaultValue": false
         }
-
-        // The 'COLUMNS' type works in the same way, except that it is a list of strings.
     ],
-
-    // The field "resourceKeys" holds a list of keys that allows to limit the number
-    // of concurrent executions and activities triggered by this recipe.
-    //
-    // Administrators can configure the limit per resource key in the Administration > Settings > Flow build
-    // screen.
-
-    "resourceKeys": []
-
+    "paramsPythonSetup": "params.py"
 }
