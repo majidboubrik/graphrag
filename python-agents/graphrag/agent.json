@@ -1,0 +1,26 @@
+/* This file is the descriptor for the python runnable prout */
+{
+    "meta": {
+        // label: name of the runnable as displayed, should be short
+        "label": "Dataiku graphrag Agent",
+
+        // description: longer string to help end users understand what this runnable does
+        "description": "Agent that can query a dataiku graphrag index built by dataiku graphrag recipe",
+
+        // icon: must be one of the FontAwesome 5.15.4 icons, complete list here at https://fontawesome.com/v5/docs/
+        "icon": "fas fa-puzzle-piece"
+    },
+    
+    "implementationMode": "NON_STREAMING_ONLY",
+
+    "params": [
+        {
+            "name": "index_folder_id",
+            "label": "The managed folder containing the index ",
+            "type": "FOLDER",
+            "description": "Some documentation for parameter1",
+            "mandatory": true
+        }
+    ]
+}
+
