@@ -15,8 +15,8 @@ llm:
   model_supports_json: true # recommended if this is available for your model.
 
 parallelization:
-  stagger: 0.3
-  # num_threads: 50
+  stagger: 0.1
+  num_threads: 20
 
 embeddings:
   async_mode: threaded # or asyncio

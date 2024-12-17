@@ -1,10 +1,9 @@
 import dataiku
-from dataiku.customrecipe import get_input_names_for_role, get_output_names_for_role, get_recipe_config
-
-
-
+from dataiku.customrecipe import get_input_names_for_role, get_output_names_for_role, get_recipe_config, get_recipe_resource
 
 import asyncio
+import os
+import shutil
 from pathlib import Path
 from graphrag.logger.factory import LoggerType
 from dku_graphrag.index.index import DataikuGraphragIndexBuilder  
@@ -18,6 +17,9 @@ output_folder_name = get_output_names_for_role('output_folder')[0]
 output_folder = dataiku.Folder(output_folder_name)
 output_folder_path = output_folder.get_path()
 
+# Remove old output folder if it exists
+if os.path.exists(output_folder_path):
+    shutil.rmtree(output_folder_path)
 
 # Retrieve recipe parameters
 config = get_recipe_config()
@@ -25,32 +27,64 @@ text_column = config.get('text_column')
 attribute_columns = config.get('attribute_columns', [])
 verbose_mode = config.get('verbose_mode', False)
 
-# Combine text and attribute columns
+# Combine text and attribute columns (if needed)
 selected_columns = [text_column] + attribute_columns
 
 # Read data from input dataset
 df = input_dataset.get_dataframe(columns=selected_columns)
 
-# Implement your indexing logic here
 if verbose_mode:
     print(f"Selected columns for indexing: {selected_columns}")
     print(f"DataFrame shape: {df.shape}")
 
-# Write the selected columns to a CSV file in the managed folder
-output_file_path = 'selected_columns.csv'
-with output_folder.get_writer(output_file_path) as writer:
-    writer.write(df.to_csv(index=False).encode('utf-8'))  # Encode the string to bytes
+# --- Step 1: Copy settings.yaml into the output folder ---
+resource_folder_path = get_recipe_resource()
+settings_source = os.path.join(resource_folder_path, "settings.yaml")
+settings_target = os.path.join(output_folder_path, "settings.yaml")
 
+# Remove old settings.yaml if it exists
+if os.path.exists(settings_target):
+    os.remove(settings_target)
 
+with output_folder.get_writer("settings.yaml") as writer:
+    with open(settings_source, "rb") as f:
+        writer.write(f.read())
+
+# --- Step 2: Copy prompts folder to the output folder ---
+prompts_source = os.path.join(resource_folder_path, "prompts")
+prompts_target = os.path.join(output_folder_path, "prompts")
+
+# Remove old prompts folder if it exists
+if os.path.exists(prompts_target):
+    shutil.rmtree(prompts_target)
+
+# Copy prompts directory
+shutil.copytree(prompts_source, prompts_target)
+
+# --- Step 3: Create input directory in output folder and copy the dataset there ---
+input_dir = os.path.join(output_folder_path, "input")
+
+# Remove old input directory if it exists
+if os.path.exists(input_dir):
+    shutil.rmtree(input_dir)
+
+os.makedirs(input_dir)
+
+# Write the entire dataset to a CSV file named after the dataset in the input directory
+input_file_path = os.path.join(input_dir, f"{input_dataset_name}.csv")
+df_full = input_dataset.get_dataframe()  # get full dataset if needed, or reuse df if partial columns suffice
+df_full.to_csv(input_file_path, index=False, encoding='utf-8')
+
+# --- Run the builder ---
 builder = DataikuGraphragIndexBuilder(logger_type=LoggerType.RICH)
 
-asyncio.run(builder.run_build_index_pipeline( 
-        root_dir=Path(output_folder_path),
-        verbose=True,
-        resume=None,
-        memprofile=False,
-        cache=True,
-        config_filepath=None,
-        skip_validation=False,
-        output_dir=None))
-        
+asyncio.run(builder.run_build_index_pipeline(
+    root_dir=Path(output_folder_path),
+    verbose=True,
+    resume=None,
+    memprofile=False,
+    cache=True,
+    config_filepath=None,
+    skip_validation=False,
+    output_dir=None
+))
