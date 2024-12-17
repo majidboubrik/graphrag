@@ -25,18 +25,19 @@ from graphrag.api.query import global_search
 from pathlib import Path
 import dataiku
 
-async def search(query: str):
+async def search(query: str, folder_id):
     # Load configuration the same way the CLI does
-    folder_id = "ldwkTWoV"
+    
     output_folder = dataiku.Folder(folder_id)
     output_folder_path = output_folder.get_path()
 
     root_dir = Path(output_folder_path)
+    print(f"output_folder_path: {output_folder_path}")
     config = load_config(root_dir)
-    nodes = pd.read_parquet("output/create_final_nodes.parquet")
-    entities = pd.read_parquet("output/create_final_entities.parquet")
-    communities = pd.read_parquet("output/create_final_communities.parquet")
-    community_reports = pd.read_parquet("output/create_final_community_reports.parquet")
+    nodes = pd.read_parquet(root_dir / 'output' / 'create_final_nodes.parquet')
+    entities = pd.read_parquet(root_dir / 'output' / 'create_final_entities.parquet')
+    communities = pd.read_parquet(root_dir / 'output' / 'create_final_communities.parquet')
+    community_reports = pd.read_parquet(root_dir / 'output' / 'create_final_community_reports.parquet')
 
     # Now global_search will use the monkeypatched functions and thus DataikuChatLLM
     response, context = await global_search(
@@ -78,13 +79,16 @@ class MyLLM(BaseLLM):
 
     def set_config(self, config, plugin_config):
         self.config = config
+        self.folder_id  = config.get("index_folder_id")
+        #self.folder_id  = "ldwkTWoV"
         
        
 
     def process(self, query, settings, trace):
+        
         query = query["messages"][0]["content"]
         
-        response, context = asyncio.run(search(query))
+        response, context = asyncio.run(search(query, self.folder_id))
         resp_text = "%s \n\n\n ###### context: ###### \n%s" % (response, context)
 
         return {"text": resp_text}

@@ -1,5 +1,3 @@
-from graphrag.query.llm.get_client import get_llm, get_text_embedder
-from graphrag.query.llm.base import BaseLLM, BaseTextEmbedding
 from dku_graphrag.query.query_dataiku_chat_llm import QueryDataikuChatLLM
 from dku_graphrag.query.query_dataiku_embedding_llm import QueryDataikuEmbeddingLLM
 

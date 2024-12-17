@@ -16,7 +16,9 @@ from fnllm.openai.types.chat.io import (
 from fnllm.types.generics import TJsonModel, THistoryEntry, TModelParameters
 from fnllm.types.io import LLMInput, LLMOutput
 from typing_extensions import Unpack
-
+import time
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 
 class DataikuChatLLM(ChatLLM[OpenAIChatCompletionInput, OpenAIChatOutput, THistoryEntry, TModelParameters]):
@@ -104,7 +106,15 @@ class DataikuChatLLM(ChatLLM[OpenAIChatCompletionInput, OpenAIChatOutput, THisto
             completion.with_json_output()
 
         # Execute the request
-        resp = completion.execute()
+        start_time = time.perf_counter()  # Start timing
+        loop = asyncio.get_running_loop()
+        with ThreadPoolExecutor() as executor:
+                resp = await loop.run_in_executor(executor, completion.execute)
+
+        #resp = completion.execute()
+        end_time = time.perf_counter()  
+        execution_time = end_time - start_time
+        self.logger.info(f"Execution time: {execution_time:.4f} seconds")
         clean_response = re.sub(r'```json\s*|\s*```', '', resp.text or "")
 
         if not resp.success:

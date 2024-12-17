@@ -1,3 +1,6 @@
 dataiku-api-client>=13.2.4
 graphrag
 fnllm
+graphrag==1.0.0
+langchain
+langchain-community

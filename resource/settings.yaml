@@ -1,6 +1,6 @@
 #root_dir: "./data"
 
-encoding_model: cl100k_base # this needs to be matched to your model!
+#encoding_model: cl100k_base # this needs to be matched to your model!
 
 llm:
   # Primary LLM for text operations; choose as needed
@@ -15,8 +15,8 @@ llm:
   model_supports_json: true # recommended if this is available for your model.
 
 parallelization:
-  stagger: 0.1
-  num_threads: 20
+  stagger: 0.2
+  num_threads: 25
 
 embeddings:
   async_mode: threaded # or asyncio
