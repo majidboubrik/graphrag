@@ -20,6 +20,34 @@
             "type": "FOLDER",
             "description": "The managed folder containing the index",
             "mandatory": true
+        },
+        {
+            "name": "search_type",
+            "label": "Please select the search type",
+            "type": "SELECT",
+            "description": "Local is a more in depth narrow search, global keep the search global using mostly community reports",
+            "selectChoices" : [
+                { "value": "local", "label": "Local Search"},
+                { "value": "global", "label": "Global Search"}
+            ],
+            "defaultValue": "local",
+            "mandatory": true
+        },
+        {
+            "name": "response_type",
+            "label": "Please enter the response type",
+            "type": "STRING",
+            "description": "free-form instruction to the LLM, so you can be creative and tailor it to how you want the response structured, examples: \"single paragraph\", \"list of 3-7 points\", \"multiple numbered steps\"",
+            "defaultValue": "multiple paragraphs",
+            "mandatory": true
+        },
+        {
+            "name": "default_community_level",
+            "label": "Please enter the response type",
+            "type": "INT",
+            "description": "Default level of community reports",
+            "defaultValue": 0,
+            "mandatory": true
         }
     ]
 }

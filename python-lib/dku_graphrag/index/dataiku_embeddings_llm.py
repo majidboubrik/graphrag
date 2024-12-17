@@ -61,7 +61,6 @@ class DataikuEmbeddingsLLM(EmbeddingsLLM):
         """
         self.logger.info("Received prompt for embedding generation: %r", prompt)
 
-        # Create a new embeddings request
         emb_query = self.emb_model.new_embeddings()
 
         if isinstance(prompt, str):
@@ -70,9 +69,7 @@ class DataikuEmbeddingsLLM(EmbeddingsLLM):
         for text in prompt:
             emb_query.add_text(text)
 
-        # Execute the query (this is synchronous, so if very large or long it might block)
-        # If needed, this could be run in a thread executor for true async, but not required if the API is fast enough.
-         # Execute the request
+
         start_time = time.perf_counter()  # Start timing
         loop = asyncio.get_running_loop()
         with ThreadPoolExecutor() as executor:

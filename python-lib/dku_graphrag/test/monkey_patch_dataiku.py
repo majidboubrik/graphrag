@@ -25,9 +25,8 @@ loaders[LLMType.OpenAIChat] = {
 }
 
 # Override the azure_openai_embedding entry to load our embeddings LLM
-loaders[LLMType.AzureOpenAIEmbedding] = {
+loaders[LLMType.OpenAIEmbedding] = {
     "load": _load_dataiku_embeddings_llm,
     "chat": False,
 }
-
-print("  =============== Monkey patching loaders DONE")
+print("  =============== Monkey patching loaders DONE ")

@@ -4,14 +4,12 @@ from dku_graphrag.query.query_dataiku_embedding_llm import QueryDataikuEmbedding
 import graphrag.query.llm.get_client
 
 def monkeypatched_get_llm(config):
-    project_key = "AGENTSANDBOX"
     llm_id = "openai:bs-openai:gpt-4o-mini"
-    return QueryDataikuChatLLM(project_key, llm_id)
+    return QueryDataikuChatLLM(llm_id)
 
 def monkeypatched_get_text_embedder(config):
-    project_key = "AGENTSANDBOX"
     embedding_model_id = "openai:bs-openai:text-embedding-3-small"
-    return QueryDataikuEmbeddingLLM(project_key, embedding_model_id)
+    return QueryDataikuEmbeddingLLM(embedding_model_id)
 
 graphrag.query.llm.get_client.get_llm = monkeypatched_get_llm
 graphrag.query.llm.get_client.get_text_embedder = monkeypatched_get_text_embedder

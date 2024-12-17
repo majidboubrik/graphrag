@@ -6,14 +6,14 @@ import dataiku
 from graphrag.callbacks.llm_callbacks import BaseLLMCallback
 from graphrag.query.llm.base import BaseLLM
 
+from concurrent.futures import ThreadPoolExecutor
 
 
 class QueryDataikuChatLLM(BaseLLM):
-    def __init__(self, project_key: str, llm_id: str):
-        self.project_key = project_key
+    def __init__(self, llm_id: str):
         self.llm_id = llm_id
         self.client = dataiku.api_client()
-        self.project = self.client.get_project(self.project_key)
+        self.project = self.client.get_default_project()
         self.llm = self.project.get_llm(self.llm_id)
         self.logger = logging.getLogger(__name__)
 
@@ -76,8 +76,9 @@ class QueryDataikuChatLLM(BaseLLM):
         # Here we use keyword arguments explicitly so run_in_executor only gets a function with no extra arguments
         def sync_generate():
             return self.generate(messages=messages, streaming=streaming, callbacks=callbacks, **kwargs)
-
-        return await loop.run_in_executor(None, sync_generate)
+        with ThreadPoolExecutor() as executor:
+            result = await loop.run_in_executor(executor, sync_generate)
+        return result
 
     async def astream_generate(
         self,

@@ -8,6 +8,11 @@ from pathlib import Path
 from graphrag.logger.factory import LoggerType
 from dku_graphrag.index.index import DataikuGraphragIndexBuilder  
 
+import logging
+from graphrag.config.load_config import load_config
+
+
+
 # Retrieve input dataset
 input_dataset_name = get_input_names_for_role('input_dataset')[0]
 input_dataset = dataiku.Dataset(input_dataset_name)
@@ -26,6 +31,10 @@ config = get_recipe_config()
 text_column = config.get('text_column')
 attribute_columns = config.get('attribute_columns', [])
 verbose_mode = config.get('verbose_mode', False)
+
+if verbose_mode:
+    logging.basicConfig(level=logging.DEBUG)  # Set minimum level to DEBUG
+
 
 # Combine text and attribute columns (if needed)
 selected_columns = [text_column] + attribute_columns
@@ -50,6 +59,7 @@ with output_folder.get_writer("settings.yaml") as writer:
     with open(settings_source, "rb") as f:
         writer.write(f.read())
 
+
 # --- Step 2: Copy prompts folder to the output folder ---
 prompts_source = os.path.join(resource_folder_path, "prompts")
 prompts_target = os.path.join(output_folder_path, "prompts")
@@ -70,21 +80,36 @@ if os.path.exists(input_dir):
 
 os.makedirs(input_dir)
 
+
+
 # Write the entire dataset to a CSV file named after the dataset in the input directory
 input_file_path = os.path.join(input_dir, f"{input_dataset_name}.csv")
 df_full = input_dataset.get_dataframe()  # get full dataset if needed, or reuse df if partial columns suffice
 df_full.to_csv(input_file_path, index=False, encoding='utf-8')
+# --- Load and modify config ---
+root_dir = Path(output_folder_path)
+
+config = load_config(root_dir, None)
+
+
+# Override relative paths with absolute paths
+# Example: if "db_uri": "output/lancedb", then make it absolute by joining with root_dir
+print(config.embeddings.vector_store)
+print(dir(config.embeddings.vector_store))
+
+if "db_uri" in config.embeddings.vector_store:
+    # Update the 'db_uri' value
+    config.embeddings.vector_store["db_uri"] = root_dir / config.embeddings.vector_store["db_uri"]
+else:
+    print("Error: 'db_uri' key not found in vector_store")
+
 
 # --- Run the builder ---
 builder = DataikuGraphragIndexBuilder(logger_type=LoggerType.RICH)
-
-asyncio.run(builder.run_build_index_pipeline(
-    root_dir=Path(output_folder_path),
-    verbose=True,
-    resume=None,
-    memprofile=False,
-    cache=True,
-    config_filepath=None,
-    skip_validation=False,
-    output_dir=None
-))
+if True:
+    asyncio.run(builder.run_build_index_pipeline(
+        config=config,
+        verbose=True,
+        resume=None,
+        memprofile=False
+    ))

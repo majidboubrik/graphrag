@@ -78,6 +78,9 @@ class DataikuGraphragIndexBuilder:
         run_id = resume or "new_run"
         self.logger.info(f"Starting indexing pipeline run with run_id={run_id}")
 
+        self.logger.info(f"Starting indexing pipeline run with run_id={run_id}, root_dir={root_dir}, verbose={verbose}, resume={resume}, memprofile={memprofile}")
+
+        self.logger.info(f"config={config}")
         # Validate configuration if skip_validation is False
         #if not skip_validation:
             #validate_config_names(progress_logger, config)
