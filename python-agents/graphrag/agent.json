@@ -45,7 +45,7 @@
             "name": "default_community_level",
             "label": "Please enter the response type",
             "type": "INT",
-            "description": "Default level of community reports",
+            "description": "Setting a higher community level makes local search return results from more narrowly defined communities, providing more specific and detailed context related to the query.",
             "defaultValue": 0,
             "mandatory": true
         }
