@@ -5,7 +5,6 @@ import asyncio
 import os
 import shutil
 from pathlib import Path
-from graphrag.logger.factory import LoggerType
 from dku_graphrag.index.dataiku_graph_index_builder import DataikuGraphragIndexBuilder  
 
 import logging

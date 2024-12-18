@@ -1,22 +1,18 @@
-from dataiku.llm.python import BaseLLM
-
-from dataiku.langchain.dku_tracer import LangchainToDKUTracer
-import json
-
 
 import dku_graphrag.query.query_monkey_patch_dataiku 
 
-import asyncio
-import pandas as pd
 
+
+import asyncio
+import json
+from pathlib import Path
+import pandas as pd
+import logging
+import dataiku
+from dataiku.llm.python import BaseLLM
+from dataiku.langchain.dku_tracer import LangchainToDKUTracer
 from graphrag.config.load_config import load_config
 from graphrag.api.query import global_search, local_search
-
-from pathlib import Path
-import dataiku
-
-
-
 
 def ensure_event_loop():
     try:
@@ -42,6 +38,7 @@ def get_span_builder_for_callback_manager_2(callbacks):
 
 class MyLLM(BaseLLM):
     def __init__(self):
+        self.logger = logging.getLogger(__name__)
         pass
 
     def set_config(self, config, plugin_config):
@@ -65,25 +62,17 @@ class MyLLM(BaseLLM):
         self.relationships = None
         self.covariates_df = None
         if self.search_type == "local":
-        # Local search requires text_units and relationships as well, optionally covariates
-            text_units_path = index_output_folder / 'create_final_text_units.parquet'
-            relationships_path = index_output_folder / 'create_final_relationships.parquet'
-            if text_units_path.exists():
-                self.text_units = pd.read_parquet(text_units_path)
-            if relationships_path.exists():
-                self.relationships = pd.read_parquet(relationships_path)
-
-            # Covariates may or may not be present
+            self.text_units = pd.read_parquet(index_output_folder / 'create_final_text_units.parquet')
+            self.relationships = pd.read_parquet(index_output_folder / 'create_final_relationships.parquet')
             covariates_path = index_output_folder / 'create_final_covariates.parquet'
+            # covariates are optional
             if covariates_path.exists():
                 self.covariates_df = pd.read_parquet(covariates_path)
-            
-        
-    
+        self.logger.info(f"Agent config initialized with: search_type={self.search_type}, folder_path ={self.folder_path}, default_community_level={self.default_community_level},  response_type ={self.response_type }")
+
     async def search(self, query: str):
-        # Decide search mode
+        self.logger.info(f"Agent search: search_type={self.search_type}, query ={query}")
         if self.search_type == "global":
-            # Global search only needs these dataframes
             response, context = await global_search(
                 config=self.graphrag_config,
                 nodes=self.nodes,
@@ -96,8 +85,6 @@ class MyLLM(BaseLLM):
                 query=query
             )
         else:
-            
-
             response, context = await local_search(
                 config=self.graphrag_config,
                 nodes=self.nodes,
@@ -110,20 +97,13 @@ class MyLLM(BaseLLM):
                 response_type=self.response_type,
                 query=query
             )
-
         return response, context 
-    def process(self, query, settings, trace):
-        
-        query = query["messages"][0]["content"]
-        
-        #response, context = asyncio.run(search(query, self.folder_id))
 
+    def process(self, query, settings, trace):
+        query = query["messages"][0]["content"]
         loop = ensure_event_loop()
         response, context = loop.run_until_complete(self.search(query))
-
         context_str = json.dumps(context, indent=2)
-
         resp_text = f"{response}\n\n\n###### context: ######\n{context_str}"
-
         return {"text": resp_text}
            
