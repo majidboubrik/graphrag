@@ -43,7 +43,7 @@
             "columnRole": "input_dataset"
         },
         {
-            "name": "chat_completion_llm",
+            "name": "chat_completion_llm_id",
             "label": "Chat Completion LLM",
             "type": "SELECT",
             "description": "Select the chat completion LLM.",
@@ -51,7 +51,7 @@
             "getChoicesFromPython": true
         },
         {
-            "name": "embedding_llm",
+            "name": "embedding_llm_id",
             "label": "Embedding LLM",
             "type": "SELECT",
             "description": "Select the embedding LLM.",

@@ -25,23 +25,21 @@ class DataikuChatLLM(ChatLLM[OpenAIChatCompletionInput, OpenAIChatOutput, THisto
     """
     DataikuChatLLM integrates a Dataiku project-provided LLM endpoint with the fnllm ChatLLM protocol.
 
-    This class simulates OpenAI-like chat completions on top of a Dataiku LLM endpoint.
+    This class simulates OpenAI-like chat completions on top of a Dataiku LLM Mesh.
     Note: Currently, caching and streaming are not implemented in this class.
     """
 
-    def __init__(self, project_key: str, llm_id: str):
+    def __init__(self, chat_completion_llm_id: str):
         """
         Initialize the DataikuChatLLM.
-
-        :param project_key: The Dataiku project key where the LLM is defined.
-        :param llm_id: The LLM identifier within the project.
+        :param chat_completion_llm_id: The LLM identifier within the project.
         """
-        self.project_key = project_key
-        self.llm_id = llm_id
-        self.client = dataiku.api_client()
-        self.project = self.client.get_project(self.project_key)
-        self.llm = self.project.get_llm(self.llm_id)
         self.logger = logging.getLogger(__name__)
+        self.chat_completion_llm_id = chat_completion_llm_id
+        self.logger.debug("Initializing DataikuEmbeddingsLLM with chat_completion_llm_id=%s", chat_completion_llm_id)
+        self.client = dataiku.api_client()
+        self.project = self.client.get_default_project()
+        self.chat_completion_llm = self.project.get_llm(self.chat_completion_llm_id)
 
 
     def _build_prompt_message(self, prompt: OpenAIChatCompletionInput) -> tuple[list[OpenAIChatMessageInput], OpenAIChatMessageInput]:
@@ -76,7 +74,7 @@ class DataikuChatLLM(ChatLLM[OpenAIChatCompletionInput, OpenAIChatOutput, THisto
 
         :return: LLMOutput containing OpenAIChatOutput and optional parsed JSON.
         """
-        self.logger.info("Calling DataikuChatLLM")
+        self.logger.debug("Calling DataikuChatLLM")
 
         history = kwargs.get("history", [])
         json_mode = kwargs.get("json", False)
@@ -91,7 +89,7 @@ class DataikuChatLLM(ChatLLM[OpenAIChatCompletionInput, OpenAIChatOutput, THisto
         all_messages = [*history, *messages]
 
         # Prepare Dataiku LLM completion request
-        completion = self.llm.new_completion()
+        completion = self.chat_completion_llm.new_completion()
         for msg in all_messages:
             if isinstance(msg, OpenAIChatCompletionMessageModel):
                 msg_role = "assistant"
@@ -159,7 +157,7 @@ class DataikuChatLLM(ChatLLM[OpenAIChatCompletionInput, OpenAIChatOutput, THisto
                 llm_output.raw_json = clean_response
                 llm_output.parsed_json = None
 
-        self.logger.info("Completed call with cleaned response=%r", clean_response)
+        self.logger.debug("Completed call with cleaned response=%r", clean_response)
         return llm_output
 
     def child(self, name: str) -> "DataikuChatLLM":
@@ -168,4 +166,4 @@ class DataikuChatLLM(ChatLLM[OpenAIChatCompletionInput, OpenAIChatOutput, THisto
         manage multiple related LLM instances under different identifiers.
         """
         self.logger.debug("Creating child LLM with name=%s", name)
-        return DataikuChatLLM(self.project_key, self.llm_id)
+        return DataikuChatLLM(self.chat_completion_llm_id)
