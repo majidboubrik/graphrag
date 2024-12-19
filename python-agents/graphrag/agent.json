@@ -43,7 +43,7 @@
         },
         {
             "name": "default_community_level",
-            "label": "Please enter the response type",
+            "label": "Please enter the default community level",
             "type": "INT",
             "description": "Setting a higher community level makes local search return results from more narrowly defined communities, providing more specific and detailed context related to the query.",
             "defaultValue": 0,
